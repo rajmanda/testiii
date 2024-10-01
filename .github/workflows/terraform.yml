@@ -46,8 +46,9 @@ jobs:
     - id: auth
       uses: google-github-actions/auth@v2.0.0  
       with:
-        workload_identity_provider: 'projects/175415323680/locations/global/workloadIdentityPools/github-identity-pool/providers/github-provider'
-        service_account: 'github-identity-federation-sa@properties-app-418208.iam.gserviceaccount.com'
+        #workload_identity_provider: 'projects/175415323680/locations/global/workloadIdentityPools/github-identity-pool/providers/github-provider'
+        workload_identity_provider: 'projects/175415323680/locations/global/workloadIdentityPools/githubpool/providers/github'
+        service_account: github-wif-sa@properties-app-418208.iam.gserviceaccount.com
 
     # - id: 'auth'
     #   name: 'Authenticate to Google Cloud'
