@@ -4,16 +4,16 @@ on:
   push:
     branches: [ "main" ]
   pull_request:
+    branches: [ "main" ]  # Ensure you specify branches for PRs
 
 permissions:
   contents: read
-  id-token: 'write'
+  id-token: write
 
 jobs:
   terraform:
     name: 'Terraform'
     runs-on: ubuntu-latest
-
 
     defaults:
       run:
@@ -30,24 +30,17 @@ jobs:
         workload_identity_provider: 'projects/175415323680/locations/global/workloadIdentityPools/github-identity-pool/providers/github-provider'
         service_account: 'github-identity-federation-sa@properties-app-418208.iam.gserviceaccount.com'
 
-
-          
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
       with:
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
-
     - name: Terraform Init
       run: terraform init
-
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       run: terraform plan -input=false
 
-
     - name: Terraform Apply
       run: terraform apply -auto-approve -input=false
-
-
