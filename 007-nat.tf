@@ -1,5 +1,12 @@
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_router_nat
+data "google_compute_router_nat" "existing_nat" {
+  name   = "nat"
+  router = google_compute_router.router.name
+  region = "us-central1"
+}
+
 resource "google_compute_router_nat" "nat" {
+  count  = length(data.google_compute_router_nat.existing_nat.*.name) == 0 ? 1 : 0
   name   = "nat"
   router = google_compute_router.router.name
   region = "us-central1"
@@ -14,7 +21,6 @@ resource "google_compute_router_nat" "nat" {
 
   nat_ips = [google_compute_address.nat.self_link]
 }
-
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_address
 resource "google_compute_address" "nat" {
   name         = "nat"
