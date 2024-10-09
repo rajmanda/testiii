@@ -115,3 +115,28 @@ By following these steps, you'll have a WIF setup in GCP and your GitHub Actions
 # tf-gcp-wif (Terraform GCP with Identity Federation)
 # tf-gcp-wif (Terraform GCP with Identity Federation)
 # tf-gcp-wif (Terraform GCP with Identity Federation)
+
+
+
+########### Running Terraform locally before you commit #########
+Follow these steps:
+
+Step 1: Authenticate with Google Cloud
+  Run the following command to authenticate and set up Application Default Credentials:
+    gcloud auth application-default login
+    
+    This will open a browser where you can log in with your Google Cloud account. After successful authentication, Google Cloud credentials will be available for Terraform to use.
+
+Step 2: Verify Authentication
+  Once authenticated, verify that your credentials are working by checking the active account:
+    gcloud auth list
+    
+    Ensure the account listed is the one you're using to manage your Google Cloud resources.
+
+Step 3: Set Project (Optional)
+  If necessary, you can set the project you're working with:
+    gcloud config set project [YOUR_PROJECT_ID]
+
+Step 4: Try Terraform Command
+  After authenticating, try running the Terraform command:
+  terraform plan

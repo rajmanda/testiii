@@ -8,8 +8,8 @@ resource "google_storage_bucket" "tf_state" {
   }
 
   # Optional settings (customize as needed)
-  lifecycle {
-    prevent_destroy = true
-  }
+  # lifecycle {
+  #   prevent_destroy = true
+  # }
 }
 
