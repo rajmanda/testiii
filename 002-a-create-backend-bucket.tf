@@ -13,10 +13,3 @@ resource "google_storage_bucket" "tf_state" {
   }
 }
 
-terraform {
-  backend "gcs" {
-    bucket  = google_storage_bucket.tf_state.name
-    prefix  = "tf/state"
-  }
-}
-
