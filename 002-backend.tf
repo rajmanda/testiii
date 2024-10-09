@@ -1,8 +1,22 @@
-# This is the only manual step that you may have to do to create the tfstate bucket with object versioning. 
- 
-terraform {
- backend "gcs" {
-   bucket  = "tf-gcp-wif-tfstate"
-   prefix  = "tf/state"
- }
+resource "google_storage_bucket" "tf_state" {
+  name     = "tf-gcp-wif-tfstate"
+  location = "US"  # Choose your desired location
+
+  # Enable versioning
+  versioning {
+    enabled = true
+  }
+
+  # Optional settings (customize as needed)
+  lifecycle {
+    prevent_destroy = true
+  }
 }
+
+terraform {
+  backend "gcs" {
+    bucket  = google_storage_bucket.tf_state.name
+    prefix  = "tf/state"
+  }
+}
+
