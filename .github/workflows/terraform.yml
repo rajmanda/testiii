@@ -12,24 +12,25 @@ permissions:
 
 jobs:
 
-  oidc_debug_test:
-    permissions:
-      contents: read
-      id-token: write
-    runs-on: ubuntu-latest
-    name: A test of the oidc debugger
-    steps:
-      - name: Checkout actions-oidc-debugger
-        uses: actions/checkout@v3
-        with:
-          repository: github/actions-oidc-debugger
-          ref: main
-          token: ${{ secrets.GITHUB_TOKEN }}
-          path: ./.github/actions/actions-oidc-debugger
-      - name: Debug OIDC Claims
-        uses: ./.github/actions/actions-oidc-debugger
-        with:
-          audience: '${{ github.server_url }}/${{ github.repository_owner }}'
+  # oidc_debug_test:
+  #   permissions:
+  #     contents: read
+  #     id-token: write
+  #   runs-on: ubuntu-latest
+  #   name: A test of the oidc debugger
+  #   steps:
+  #     - name: Checkout actions-oidc-debugger
+  #       uses: actions/checkout@v3
+  #       with:
+  #         repository: github/actions-oidc-debugger
+  #         ref: main
+  #         token: ${{ secrets.GITHUB_TOKEN }}
+  #         path: ./.github/actions/actions-oidc-debugger
+  #     - name: Debug OIDC Claims
+  #       uses: ./.github/actions/actions-oidc-debugger
+  #       with:
+  #         audience: '${{ github.server_url }}/${{ github.repository_owner }}'
+
   terraform:
     name: 'Terraform'
     runs-on: ubuntu-latest
@@ -57,17 +58,17 @@ jobs:
     - name: Terraform Init
       run: terraform init
 
-    # # Generates an execution plan for Terraform
-    # - name: Terraform Plan
-    #   run: terraform plan -input=false
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan
+      run: terraform plan -input=false
 
-    # - name: Terraform Apply
-    #   run: terraform apply -auto-approve -input=false
+    - name: Terraform Apply
+      run: terraform apply -auto-approve -input=false
 
     # Generates a destruction plan for Terraform
-    - name: Terraform Plan Destroy
-      run: terraform plan -destroy -input=false
+    # - name: Terraform Plan Destroy
+    #   run: terraform plan -destroy -input=false
 
-    - name: Terraform Destroy
-      run: terraform destroy -auto-approve -input=false
+    # - name: Terraform Destroy
+    #   run: terraform destroy -auto-approve -input=false
       
