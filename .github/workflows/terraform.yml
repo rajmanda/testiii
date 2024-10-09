@@ -2,9 +2,13 @@ name: 'Terraform'
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - "main"              # Match the main branch
+      - "feature/**"        # Match any branch that starts with 'feature'
   pull_request:
-    branches: [ "main" ]  # Ensure you specify branches for PRs
+    branches:
+      - "main"              # Match pull requests targeting the main branch
+      - "feature/**"        # Match any pull request targeting branches that start with 'feature'
 
 permissions:
   contents: read
