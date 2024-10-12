@@ -9,6 +9,14 @@ TFVARS_FILE="../000-vars.tfvars"  # Path to the terraform.tfvars file
 # Check if the GKE cluster exists
 gcloud container clusters describe $CLUSTER_NAME --zone $ZONE --project $PROJECT &> /dev/null
 
+echo "Raj Start"
+echo "Using project: $CLOUDSDK_CORE_PROJECT"
+echo "Using credentials: $GOOGLE_APPLICATION_CREDENTIALS"
+gcloud container clusters describe $CLUSTER_NAME --zone $ZONE --project $PROJECT &> /dev/null
+echo "Raj End"
+
+gcloud container clusters describe gke-cluster --zone us-central1-a --project properties-app-418208 &> /dev/null
+
 # Check the result of the command and update the terraform.tfvars file
 if [ $? -ne 0 ]; then
   echo "Cluster does not exist. Terraform will create a new cluster."
