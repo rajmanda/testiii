@@ -44,6 +44,7 @@ jobs:
     - name: Check if GKE Cluster Exists
       run: |
         chmod +x .github/workflows/scripts/check-gke-cluster.sh
+        .github/workflows/scripts/check-gke-cluster.sh
 
     - name: Terraform Init
       run: terraform init
