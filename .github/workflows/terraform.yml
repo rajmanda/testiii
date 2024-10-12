@@ -15,26 +15,6 @@ permissions:
   id-token: write
 
 jobs:
-
-  # oidc_debug_test:
-  #   permissions:
-  #     contents: read
-  #     id-token: write
-  #   runs-on: ubuntu-latest
-  #   name: A test of the oidc debugger
-  #   steps:
-  #     - name: Checkout actions-oidc-debugger
-  #       uses: actions/checkout@v3
-  #       with:
-  #         repository: github/actions-oidc-debugger
-  #         ref: main
-  #         token: ${{ secrets.GITHUB_TOKEN }}
-  #         path: ./.github/actions/actions-oidc-debugger
-  #     - name: Debug OIDC Claims
-  #       uses: ./.github/actions/actions-oidc-debugger
-  #       with:
-  #         audience: '${{ github.server_url }}/${{ github.repository_owner }}'
-
   terraform:
     name: 'Terraform'
     runs-on: ubuntu-latest
@@ -59,6 +39,12 @@ jobs:
       with:
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
+    # Run the bash script to check GKE cluster status
+    - name: Check if GKE Cluster Exists
+      run: |
+        chmod +x scripts/check-gke-cluster.sh
+        ./scripts/check-gke-cluster.sh
+
     - name: Terraform Init
       run: terraform init
 
@@ -68,6 +54,7 @@ jobs:
 
     - name: Terraform Apply
       run: terraform apply -auto-approve -input=false
+
 
     # Generates a destruction plan for Terraform
     # - name: Terraform Plan Destroy

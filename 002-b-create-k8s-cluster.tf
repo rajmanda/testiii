@@ -1,4 +1,6 @@
+# Conditionally create the cluster if it doesn't exist
 resource "google_container_cluster" "primary" {
+  count = var.skip_cluster_creation ? 0 : 1
   name     = "gke-cluster"
   location = "us-central1-a"  # Specify a specific zone
 
