@@ -40,38 +40,38 @@ jobs:
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
 
-      # Install Google Cloud SDK
-    - name: Install Google Cloud SDK
-      run: |
-        echo "Installing Google Cloud SDK..."
-        echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-        curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
-        sudo apt-get update && sudo apt-get install -y google-cloud-sdk
+    #   # Install Google Cloud SDK
+    # - name: Install Google Cloud SDK
+    #   run: |
+    #     echo "Installing Google Cloud SDK..."
+    #     echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+    #     curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
+    #     sudo apt-get update && sudo apt-get install -y google-cloud-sdk
 
-    # Run the bash script to check GKE cluster status
-    - name: Check if GKE Cluster Exists
-      run: |
-        echo ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }} > $GOOGLE_APPLICATION_CREDENTIALS
-        gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
-        gcloud config set project properties-app-418208
-        chmod +x .github/workflows/scripts/check-gke-cluster.sh
-        .github/workflows/scripts/check-gke-cluster.sh
+    # # Run the bash script to check GKE cluster status
+    # - name: Check if GKE Cluster Exists
+    #   run: |
+    #     echo ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }} > $GOOGLE_APPLICATION_CREDENTIALS
+    #     gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+    #     gcloud config set project properties-app-418208
+    #     chmod +x .github/workflows/scripts/check-gke-cluster.sh
+    #     .github/workflows/scripts/check-gke-cluster.sh
 
     - name: Terraform Init
       run: terraform init
 
     # Generates an execution plan for Terraform
-    - name: Terraform Plan
-      run: terraform plan -input=false
+    # - name: Terraform Plan
+    #   run: terraform plan -input=false
 
-    - name: Terraform Apply
-      run: terraform apply -auto-approve -input=false
+    # - name: Terraform Apply
+    #   run: terraform apply -auto-approve -input=false
 
 
     # Generates a destruction plan for Terraform
-    # - name: Terraform Plan Destroy
-    #   run: terraform plan -destroy -input=false
+    - name: Terraform Plan Destroy
+      run: terraform plan -destroy -input=false
 
-    # - name: Terraform Destroy
-    #   run: terraform destroy -auto-approve -input=false
+    - name: Terraform Destroy
+      run: terraform destroy -auto-approve -input=false
       
