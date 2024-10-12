@@ -3,3 +3,9 @@ provider "google" {
   region  = "us-central1" # Specify the desired region
 }
 
+terraform {
+  backend "gcs" {
+    bucket  = "tf-gcp-wif-tfstate"
+    prefix  = "terraform/state"   # Optional, used for organization within the bucket
+  }
+}
