@@ -43,6 +43,9 @@ jobs:
     # Run the bash script to check GKE cluster status
     - name: Check if GKE Cluster Exists
       run: |
+        echo ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }} > $GOOGLE_APPLICATION_CREDENTIALS
+        gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+        gcloud config set project properties-app-418208
         chmod +x .github/workflows/scripts/check-gke-cluster.sh
         .github/workflows/scripts/check-gke-cluster.sh
 
