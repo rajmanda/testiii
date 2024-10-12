@@ -50,11 +50,4 @@ jobs:
     - name: Terraform Apply
       run: terraform apply -auto-approve -input=false
 
-
-    # Generates a destruction plan for Terraform
-    # - name: Terraform Plan Destroy
-    #   run: terraform plan -destroy -input=false
-
-    # - name: Terraform Destroy
-    #   run: terraform destroy -auto-approve -input=false
       
