@@ -18,7 +18,7 @@ resource "google_container_cluster" "primary" {
     }
   }
 
-  initial_node_count  = 2
+  initial_node_count  = 1
   deletion_protection = false
 
   node_config {
