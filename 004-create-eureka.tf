@@ -1,11 +1,11 @@
-# Get the Google client configuration
-data "google_client_config" "default" {}
+# # Get the Google client configuration
+# data "google_client_config" "default" {}
 
-# Get the GKE cluster data
-data "google_container_cluster" "gke_cluster" {
-  name     = "gke-cluster"    # Your cluster name
-  location = "us-central1-a"  # Cluster location
-}
+# # Get the GKE cluster data
+# data "google_container_cluster" "gke_cluster" {
+#   name     = "gke-cluster"    # Your cluster name
+#   location = "us-central1-a"  # Cluster location
+# }
 
 # # Define the Kubernetes provider
 # provider "kubernetes" {
