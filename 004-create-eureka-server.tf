@@ -37,16 +37,16 @@ resource "null_resource" "fetch_and_extract_charts_ygqygq2" {
   }
 }
 
-# # Step 3: Move the common chart into the eureka chart's charts/ directory
-# resource "null_resource" "move_common_chart" {
-#   depends_on = [null_resource.fetch_and_extract_charts_common]
+# Step 3: Move the common chart into the eureka chart's charts/ directory
+resource "null_resource" "move_common_chart" {
+  depends_on = [null_resource.fetch_and_extract_charts_common]
 
-#   provisioner "local-exec" {
-#     command = <<EOT
-#       mv common ./eureka/charts/
-#     EOT
-#   }
-# }
+  provisioner "local-exec" {
+    command = <<EOT
+      mv common ./eureka/charts/
+    EOT
+  }
+}
 
 # # Step 4: Install the Eureka Helm chart
 # resource "helm_release" "eureka" {
