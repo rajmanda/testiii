@@ -25,7 +25,7 @@ resource "google_container_cluster" "primary" {
   # E2-Small: 2 shared vCPUs, 2 GB RAM (cheaper)
   # E2-Micro: 2 shared vCPUs, 1 GB RAM (cheapest in the E2 family)
   # F1-Micro: 1 shared vCPU, 0.6 GB RAM (ultra-cheap, suitable for extremely light workloads)
-
+  
   node_config {
     machine_type = "F1-Micro"
     disk_size_gb = 50
