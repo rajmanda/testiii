@@ -37,7 +37,7 @@ resource "helm_release" "eureka" {
   chart      = "eureka"                             # Chart name
   version    = "2.0.0"                              # Specific version
 
-  namespace  = "eureka"                            # Specify the namespace to deploy
+  namespace  = kubernetes_namespace.eureka.metadata[0].name  # Reference the created namespace
 
   set {
     name  = "REGISTER_WITH_EUREKA"
@@ -53,6 +53,8 @@ resource "helm_release" "eureka" {
     name  = "ENABLE_SELF_PRESERVATION"
     value = "False"
   }
+
+  depends_on = [kubernetes_namespace.eureka]  # Ensure the namespace is created before Helm release
 }
 
 # Output the Eureka Helm release status
@@ -60,18 +62,21 @@ output "eureka_helm_release_status" {
   value = helm_release.eureka.status
 }
 
-# Output the Eureka service endpoint (if exposed as a service)
 # Data source to fetch Eureka service details
 data "kubernetes_service" "eureka_service" {
   metadata {
     name      = "my-eureka"  # Change this to the actual Eureka service name
-    namespace = "eureka"    # Adjust the namespace if needed
+    namespace = kubernetes_namespace.eureka.metadata[0].name  # Use the created namespace
   }
+
+  depends_on = [helm_release.eureka]  # Ensure the Helm release is completed before querying
 }
 
 # Output the Eureka service LoadBalancer IP (or ClusterIP if applicable)
 output "eureka_service_endpoint" {
-  value = data.kubernetes_service.eureka_service.status.0.load_balancer.0.ingress[0].ip
+  value = data.kubernetes_service.eureka_service.status[0].load_balancer[0].ingress[0].ip
+  description = "LoadBalancer IP of the Eureka service"  # Description for clarity
 }
+
 
 
