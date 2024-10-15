@@ -21,8 +21,13 @@ resource "google_container_cluster" "primary" {
   initial_node_count  = 1
   deletion_protection = false
 
+  # E2-Medium: 2 vCPUs, 4 GB RAM
+  # E2-Small: 2 shared vCPUs, 2 GB RAM (cheaper)
+  # E2-Micro: 2 shared vCPUs, 1 GB RAM (cheapest in the E2 family)
+  # F1-Micro: 1 shared vCPU, 0.6 GB RAM (ultra-cheap, suitable for extremely light workloads)
+
   node_config {
-    machine_type = "e2-medium"
+    machine_type = "F1-Micro"
     disk_size_gb = 50
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
