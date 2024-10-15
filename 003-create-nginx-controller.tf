@@ -23,12 +23,6 @@ provider "helm" {
   }
 }
 
-# Add Helm repositories
-resource "helm_repository" "bitnami" {
-  name = "bitnami"
-  url  = "https://charts.bitnami.com/bitnami"
-}
-
 # Deploy resources on GKE
 resource "kubernetes_namespace" "example" {
   metadata {
@@ -39,9 +33,9 @@ resource "kubernetes_namespace" "example" {
 # Deploy the NGINX Ingress Controller using Helm
 resource "helm_release" "nginx_ingress" {
   name       = "nginx-ingress"
-  repository = helm_repository.bitnami.name  # Reference the added repository
+  repository = "bitnami"                          # Use Bitnami repository name directly
   chart      = "nginx-ingress-controller"
-  version    = "11.4.4"                       # Ensure this version exists in the repository
+  version    = "11.4.4"                           # Ensure this version exists in the repository
   namespace  = kubernetes_namespace.example.metadata[0].name  # Use the created namespace
 
   values = [
