@@ -86,3 +86,4 @@ data "kubernetes_service" "eureka_service" {
 output "eureka_service_endpoint" {
   value = data.kubernetes_service.eureka_service.status[0].load_balancer[0].ingress[0].ip
 }
+
