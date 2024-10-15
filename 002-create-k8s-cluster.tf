@@ -51,5 +51,5 @@ resource "google_container_node_pool" "primary_nodes" {
     tags         = ["gke-node"]  # Attach tags for firewall rules
   }
 
-  initial_node_count = 3
+  initial_node_count = 2
 }
