@@ -45,7 +45,7 @@ resource "google_container_node_pool" "primary_nodes" {
   location   = google_container_cluster.primary.location
 
   node_config {
-    machine_type = "e2-micro"  # Use the machine type you need
+    machine_type = "e2-small"  # gcloud compute machine-types list --zones=us-central1-a --sort-by=guestCpus --format="table(name, guestCpus, memoryMb, description)"
     disk_size_gb = 50
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
