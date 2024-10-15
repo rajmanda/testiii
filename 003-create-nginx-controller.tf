@@ -1,14 +1,14 @@
-# Data source to fetch Google client configuration
-data "google_client_config" "default" {}
+# # Data source to fetch Google client configuration
+# data "google_client_config" "default" {}
 
-# Add the Helm provider
-provider "helm" {
-  kubernetes {
-    cluster_ca_certificate = data.google_client_config.default.cluster_ca_certificate
-    host                   = data.google_client_config.default.endpoint
-    token                  = data.google_client_config.default.access_token
-  }
-}
+# # Add the Helm provider
+# provider "helm" {
+#   kubernetes {
+#     cluster_ca_certificate = data.google_client_config.default.cluster_ca_certificate
+#     host                   = data.google_client_config.default.endpoint
+#     token                  = data.google_client_config.default.access_token
+#   }
+# }
 
 # Install the NGINX Ingress controller
 resource "helm_release" "nginx_ingress" {
