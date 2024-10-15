@@ -67,7 +67,7 @@ resource "google_container_node_pool" "primary_nodes" {
   location   = google_container_cluster.primary.location
 
   node_config {
-    machine_type = "e2-medium"
+    machine_type = "e2-micro"
     tags         = ["gke-node"]  # This tag should match the target_tags in the firewall rule
   }
 
