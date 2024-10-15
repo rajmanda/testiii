@@ -8,11 +8,16 @@ data "google_container_cluster" "primary" {
 }
 
 # Add the Helm provider
+# provider "helm" {
+#   kubernetes {
+#     cluster_ca_certificate = data.google_container_cluster.primary.master_auth[0].cluster_ca_certificate
+#     host                   = data.google_container_cluster.primary.endpoint
+#     token                  = data.google_client_config.default.access_token  # Use google_client_config for token
+#   }
+# }
 provider "helm" {
   kubernetes {
-    cluster_ca_certificate = data.google_container_cluster.primary.master_auth[0].cluster_ca_certificate
-    host                   = data.google_container_cluster.primary.endpoint
-    token                  = data.google_client_config.default.access_token  # Use google_client_config for token
+    config_path = "~/.kube/config"
   }
 }
 
@@ -21,7 +26,7 @@ resource "helm_release" "nginx_ingress" {
   name       = "nginx-ingress"
   repository = "bitnami/nginx-ingress-controller"  # Use Bitnami repository
   chart      = "nginx-ingress-controller"
-  version    = "11.4.4"  # Update this to the latest chart version; get this by running `helm search repo nginx-ingress`
+  version    = "11.4.4"                            # Update this to the latest chart version; get this by running `helm search repo nginx-ingress`
   namespace  = "kube-system"
   values = [
     <<EOF
