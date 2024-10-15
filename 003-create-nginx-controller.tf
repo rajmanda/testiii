@@ -24,7 +24,7 @@ provider "helm" {
 }
 
 # Deploy resources on GKE
-resource "kubernetes_namespace" "example" {
+resource "kubernetes_namespace" "nginxns" {
   metadata {
     name = "ingress-nginx"
   }
@@ -36,7 +36,7 @@ resource "kubernetes_namespace" "example" {
 #   repository = "bitnami"                          # Use Bitnami repository name directly
 #   chart      = "nginx-ingress-controller"
 #   version    = "11.4.4"                           # Ensure this version exists in the repository
-#   namespace  = kubernetes_namespace.example.metadata[0].name  # Use the created namespace
+#   namespace  = kubernetes_namespace.nginxns.metadata[0].name  # Use the created namespace
 
 #   values = [
 #     <<EOF
@@ -58,7 +58,7 @@ resource "helm_release" "nginx_ingress" {
   repository = "nginx-stable"                     # Use the official NGINX repository
   chart      = "nginx-ingress"                    # Use the chart name for NGINX Ingress Controller
   version    = "1.4.0"                            # Specify the desired chart version (check the available versions - "helm search repo nginx-stable/nginx-ingress --versions")
-  namespace  = kubernetes_namespace.example.metadata[0].name  # Use the created namespace
+  namespace  = kubernetes_namespace.nginxns.metadata[0].name  # Use the created namespace
 
   values = [
     <<EOF
