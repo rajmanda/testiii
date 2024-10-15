@@ -7,19 +7,20 @@ resource "null_resource" "prepare_eureka_chart" {
   }
 }
 
-# # Step 2: Fetch and extract the charts
-# resource "null_resource" "fetch_and_extract_charts" {
-#   depends_on = [null_resource.prepare_eureka_chart]
+# Step 2: Fetch and extract the charts
+resource "null_resource" "fetch_and_extract_charts" {
+  depends_on = [null_resource.prepare_eureka_chart]
 
-#   provisioner "local-exec" {
-#     command = <<EOT
-#       helm fetch ygqygq2/eureka --version 2.0.0
-#       helm fetch bitnami/common --version 2.26.0
-#       tar -xvzf eureka-2.0.0.tgz
-#       tar -xvzf common-2.26.0.tgz
-#     EOT
-#   }
-# }
+  provisioner "local-exec" {
+    command = <<EOT
+      helm fetch ygqygq2/eureka --version 2.0.0
+      helm fetch bitnami/common --version 2.26.0
+      tar -xvzf eureka-2.0.0.tgz
+      tar -xvzf common-2.26.0.tgz
+      ls -l
+    EOT
+  }
+}
 
 # # Step 3: Move the common chart into the eureka chart's charts/ directory
 # resource "null_resource" "move_common_chart" {
