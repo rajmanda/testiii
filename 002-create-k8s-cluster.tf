@@ -2,14 +2,16 @@ resource "google_container_cluster" "primary" {
   name     = "gke-cluster"
   location = "us-central1-a"  # Specify a specific zone
 
+  # Disable the default node pool
+  remove_default_node_pool = true
+  initial_node_count       = 1  # Required by Terraform even though default pool is removed
+
   master_authorized_networks_config {
     cidr_blocks {
       cidr_block   = "0.0.0.0/0"  # Allow all networks for public access
       display_name = "Public access"
     }
   }
-
-  initial_node_count  = 1  # This can be set to a minimal value, as the actual nodes will be managed by node pools
   deletion_protection = false
 
   network    = "default"
