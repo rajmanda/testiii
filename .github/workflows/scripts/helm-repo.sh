@@ -1,45 +1,34 @@
 #!/bin/bash
 
+# Set the Helm repositories
+REPOS=("bitnami=https://charts.bitnami.com/bitnami" "nginx-stable=https://helm.nginx.com/stable")
+
 # Function to add Helm repositories
-add_helm_repos() {
-  echo "Adding Helm repositories..."
-
-  # Add Bitnami repository
-  helm repo add bitnami https://charts.bitnami.com/bitnami
-
-  # Add NGINX stable repository
-  helm repo add nginx-stable https://helm.nginx.com/stable
-
-  # Add any additional repositories here
+add_repos() {
+  for repo in "${REPOS[@]}"; do
+    helm repo add ${repo%%=*} ${repo#*=}
+  done
   echo "Helm repositories added successfully."
 }
 
-# Function to list Helm repositories
-list_helm_repos() {
-  echo "Listing Helm repositories..."
-  helm repo list
-}
-
 # Function to update Helm repositories
-update_helm_repos() {
-  echo "Updating Helm repositories..."
+update_repos() {
   helm repo update
+  echo "Helm repositories updated successfully."
 }
 
-# Function to list chart versions for a specific chart
+# Function to list chart versions
 list_chart_versions() {
-  local chart_name="$1"
-  echo "Available versions for chart '$chart_name':"
-  helm search repo "$chart_name" --versions | awk '{print $2, $3}' | tail -n +2 # Exclude header
+  CHARTS=("nginx-stable/nginx-ingress" "bitnami/nginx-ingress-controller")
+
+  echo "Listing available chart versions:"
+  for chart in "${CHARTS[@]}"; do
+    echo "Available versions for chart '$chart':"
+    helm search repo $chart --versions | awk '{print $1, $2}' | tail -n +2
+  done
 }
 
 # Main script execution
-add_helm_repos
-update_helm_repos
-list_helm_repos
-
-# List versions for specific charts
-list_chart_versions "nginx-ingress"
-list_chart_versions "bitnami/nginx-ingress-controller"
-
-echo "Script execution completed."
+add_repos
+update_repos
+list_chart_versions
