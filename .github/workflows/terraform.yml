@@ -34,6 +34,12 @@ jobs:
         workload_identity_provider: 'projects/175415323680/locations/global/workloadIdentityPools/githubpool/providers/github'
         service_account: github-wif-sa@properties-app-418208.iam.gserviceaccount.com
 
+    # Run the Helm repo script
+    - name: Run Helm Repo Script
+      run: |
+        chmod +x .github/workflows/scripts/helm-repo.sh
+        .github/workflows/scripts/helm-repo.sh
+         
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
       with:
