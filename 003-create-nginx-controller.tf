@@ -13,11 +13,10 @@
 # Install the NGINX Ingress controller
 resource "helm_release" "nginx_ingress" {
   name       = "nginx-ingress"
-  repository = "https://charts.helm.sh/stable"
-  chart      = "nginx-ingress"
-  version    = "1.4.0"  # Update this to the latest chart version; get this by running `helm search repo nginx-ingress`
+  repository = "bitnami/nginx-ingress-controller"  # Use Bitnami repository
+  chart      = "nginx-ingress-controller"
+  version    = "11.4.4"  # Update this to the latest chart version; get this by running `helm search repo nginx-ingress`
   namespace  = "kube-system"
-
   values = [
     <<EOF
 controller:
