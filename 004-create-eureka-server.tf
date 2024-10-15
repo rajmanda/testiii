@@ -7,7 +7,7 @@ resource "null_resource" "prepare_eureka_chart" {
   }
 }
 
-# Step 2: Fetch and extract the bitnami/common charts
+# Step 2a: Fetch and extract the bitnami/common charts
 resource "null_resource" "fetch_and_extract_charts_common" {
   depends_on = [null_resource.prepare_eureka_chart]
 
@@ -20,7 +20,11 @@ resource "null_resource" "fetch_and_extract_charts_common" {
   }
 }
 
-# Step 2: Fetch and extract the charts
+# Step 2b: Fetch and extract the charts  - 
+#Before this 
+    #helm repo add ygqygq2 https://ygqygq2.github.io/charts/
+    #helm repo update
+
 resource "null_resource" "fetch_and_extract_charts_ygqygq2" {
   depends_on = [null_resource.fetch_and_extract_charts_common]
 
