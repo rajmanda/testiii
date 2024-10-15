@@ -17,20 +17,21 @@ provider "kubernetes" {
 # Define the Helm provider
 provider "helm" {
   kubernetes {
-    config_path = "~/.kube/config"  # Alternatively, use the Kubernetes provider config
+    host                   = "https://${data.google_container_cluster.gke_cluster.endpoint}"
+    token                  = data.google_client_config.default.access_token
+    cluster_ca_certificate = base64decode(data.google_container_cluster.gke_cluster.master_auth.0.cluster_ca_certificate)
   }
 }
+
+# Add Helm repositories
+resource "helm_repository" "bitnami" {
+  name = "bitnami"
+  url  = "https://charts.bitnami.com/bitnami"
+}
+
 # Deploy resources on GKE
 resource "kubernetes_namespace" "example" {
   metadata {
-    annotations = {
-      name = "ingress-nginx"
-    }
-
-    labels = {
-      mylabel = "ingress-nginx"
-    }
-
     name = "ingress-nginx"
   }
 }
@@ -38,10 +39,10 @@ resource "kubernetes_namespace" "example" {
 # Deploy the NGINX Ingress Controller using Helm
 resource "helm_release" "nginx_ingress" {
   name       = "nginx-ingress"
-  repository = "bitnami/nginx-ingress-controller"  # Use Bitnami repository
+  repository = helm_repository.bitnami.name  # Reference the added repository
   chart      = "nginx-ingress-controller"
-  version    = "11.4.4"                            # Update this to the latest chart version
-  namespace  = "ingress-nginx"
+  version    = "11.4.4"                       # Ensure this version exists in the repository
+  namespace  = kubernetes_namespace.example.metadata[0].name  # Use the created namespace
 
   values = [
     <<EOF
