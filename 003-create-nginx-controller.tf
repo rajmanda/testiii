@@ -44,8 +44,8 @@ controller:
   service:
     enabled: true
     annotations:
-      cloud.google.com/load-balancer-type: "External"
-    loadBalancerIP: "34.44.172.58"  # Specify your static external IP here
+      cloud.google.com/load-balancer-type: External
+    loadBalancerIP: 34.44.172.58  # Specify your static external IP here
 EOF
   ]
 }
