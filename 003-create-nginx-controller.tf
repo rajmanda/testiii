@@ -29,19 +29,6 @@ resource "kubernetes_namespace" "nginxns" {
     name = "ingress-nginx"
   }
 }
-# Create Kalyanam Namespace
-resource "kubernetes_namespace" "kalyanam" {
-  metadata {
-    name = "kalyanam"
-  }
-}
-
-# Create Eureka Namespace
-resource "kubernetes_namespace" "eureka" {
-  metadata {
-    name = "eureka"
-  }
-}
 
 # # Deploy the NGINX Ingress Controller using Helm
 # resource "helm_release" "nginx_ingress" {
