@@ -56,6 +56,11 @@ resource "helm_release" "eureka" {
     name  = "ENABLE_SELF_PRESERVATION"
     value = "False"
   }
+  
+  set {
+    name  = "replicaCount"
+    value = "1"
+  }
 }
 
 # Optional: Output Eureka Helm release status
