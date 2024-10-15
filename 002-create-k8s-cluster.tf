@@ -1,15 +1,10 @@
-# Conditionally create the cluster if it doesn't exist
 resource "google_container_cluster" "primary" {
-  # count = var.skip_cluster_creation ? 0 : 1
   name     = "gke-cluster"
   location = "us-central1-a"  # Specify a specific zone
 
-  # Remove private cluster configuration for public access
-  # private_cluster_config {
-  #   enable_private_nodes    = true
-  #   enable_private_endpoint = false
-  #   master_ipv4_cidr_block  = "172.16.0.0/28"  # Define the master CIDR block
-  # }
+  # Disable the default node pool
+  remove_default_node_pool = true
+  initial_node_count       = 1  # Required by Terraform even though default pool is removed
 
   master_authorized_networks_config {
     cidr_blocks {
@@ -17,23 +12,7 @@ resource "google_container_cluster" "primary" {
       display_name = "Public access"
     }
   }
-
-  initial_node_count  = 1
   deletion_protection = false
-
-  # E2-Medium: 2 vCPUs, 4 GB RAM
-  # E2-Small: 2 shared vCPUs, 2 GB RAM (cheaper)
-  # E2-Micro: 2 shared vCPUs, 1 GB RAM (cheapest in the E2 family)
-  # F1-Micro: 1 shared vCPU, 0.6 GB RAM (ultra-cheap, suitable for extremely light workloads)
-
-  node_config {
-    machine_type = "e2-micro" # gcloud compute machine-types list --zones=us-central1-a --sort-by=guestCpus --format="table(name, guestCpus, memoryMb, description)"
-    disk_size_gb = 50
-    oauth_scopes = [
-      "https://www.googleapis.com/auth/cloud-platform"
-    ]
-    # Remove enable_external_ips (public by default)
-  }
 
   network    = "default"
   subnetwork = "default"
@@ -59,17 +38,20 @@ resource "google_compute_firewall" "allow_443_gke_api" {
   target_tags = ["gke-node"]  # Use the correct tag associated with GKE nodes.
 }
 
-# Attach tags to the GKE nodes (this is necessary to apply firewall rules)
+# Manage GKE node pool separately
 resource "google_container_node_pool" "primary_nodes" {
-  # count = var.skip_cluster_creation ? 0 : 1
   name       = "primary-nodes"
   cluster    = google_container_cluster.primary.name
   location   = google_container_cluster.primary.location
 
   node_config {
-    machine_type = "e2-medium"
-    tags         = ["gke-node"]  # This tag should match the target_tags in the firewall rule
+    machine_type = "e2-micro"  # Use the machine type you need
+    disk_size_gb = 50
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform"
+    ]
+    tags         = ["gke-node"]  # Attach tags for firewall rules
   }
 
-  initial_node_count = 3
+  initial_node_count = 2
 }
