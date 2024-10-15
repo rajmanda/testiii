@@ -1,12 +1,15 @@
-# Data source to fetch Google client configuration
-data "google_client_config" "default" {}
+# Data source to fetch the Google container cluster
+data "google_container_cluster" "primary" {
+  name     = "gke-cluster"
+  location = "us-central1-a"  # Make sure this matches the location of your cluster
+}
 
 # Add the Helm provider
 provider "helm" {
   kubernetes {
-    cluster_ca_certificate = data.google_client_config.default.cluster_ca_certificate
-    host                   = data.google_client_config.default.endpoint
-    token                  = data.google_client_config.default.access_token
+    cluster_ca_certificate = data.google_container_cluster.primary.master_auth[0].cluster_ca_certificate
+    host                   = data.google_container_cluster.primary.endpoint
+    token                  = data.google_container_cluster.primary.master_auth[0].access_token
   }
 }
 
