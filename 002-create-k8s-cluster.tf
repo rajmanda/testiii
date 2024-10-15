@@ -27,7 +27,7 @@ resource "google_container_cluster" "primary" {
   # F1-Micro: 1 shared vCPU, 0.6 GB RAM (ultra-cheap, suitable for extremely light workloads)
 
   node_config {
-    machine_type = "E2-Micro"
+    machine_type = "f1-micro" # gcloud compute machine-types list --zones=us-central1-a
     disk_size_gb = 50
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
