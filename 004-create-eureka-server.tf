@@ -87,38 +87,38 @@ resource "null_resource" "move_common_chart" {
   }
 }
 
-# # Step 4: Install the Eureka Helm chart
-# resource "helm_release" "eureka" {
-#   depends_on = [null_resource.move_common_chart]
+# Step 4: Install the Eureka Helm chart
+resource "helm_release" "eureka" {
+  depends_on = [null_resource.move_common_chart]
   
-#   name       = "my-eureka"
-#   chart      = "./eureka"  # Use the local directory after modifying the chart structure
-#   version    = "2.0.0"
+  name       = "my-eureka"
+  chart      = "./eureka"  # Use the local directory after modifying the chart structure
+  version    = "2.0.0"
 
-#   namespace  = "eureka"
+  namespace  = "eureka"
 
-#   set {
-#     name  = "REGISTER_WITH_EUREKA"
-#     value = "False"
-#   }
+  set {
+    name  = "REGISTER_WITH_EUREKA"
+    value = "False"
+  }
 
-#   set {
-#     name  = "FETCH_REGISTRY"
-#     value = "False"
-#   }
+  set {
+    name  = "FETCH_REGISTRY"
+    value = "False"
+  }
 
-#   set {
-#     name  = "ENABLE_SELF_PRESERVATION"
-#     value = "False"
-#   }
+  set {
+    name  = "ENABLE_SELF_PRESERVATION"
+    value = "False"
+  }
   
-#   set {
-#     name  = "replicaCount"
-#     value = "1"
-#   }
-# }
+  set {
+    name  = "replicaCount"
+    value = "1"
+  }
+}
 
-# # Optional: Output Eureka Helm release status
-# output "eureka_helm_release_status" {
-#   value = helm_release.eureka.status
-# }
+# Optional: Output Eureka Helm release status
+output "eureka_helm_release_status" {
+  value = helm_release.eureka.status
+}

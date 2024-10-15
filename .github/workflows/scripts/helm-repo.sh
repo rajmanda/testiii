@@ -8,14 +8,14 @@ REPOS=("bitnami=https://charts.bitnami.com/bitnami"
 # Function to add Helm repositories
 add_repos() {
   for repo in "${REPOS[@]}"; do
-    helm repo add ${repo%%=*} ${repo#*=}
+    helm repo add "${repo%%=*}" "${repo#*=}" || { echo "Failed to add repository: ${repo%%=*}"; exit 1; }
   done
   echo "Helm repositories added successfully."
 }
 
 # Function to update Helm repositories
 update_repos() {
-  helm repo update
+  helm repo update || { echo "Failed to update repositories"; exit 1; }
   echo "Helm repositories updated successfully."
 }
 
@@ -26,7 +26,7 @@ list_chart_versions() {
   echo "Listing available chart versions:"
   for chart in "${CHARTS[@]}"; do
     echo "Available versions for chart '$chart':"
-    helm search repo $chart --versions | awk '{print $1, $2}' | tail -n +2
+    helm search repo "$chart" --versions | awk '{print $1, $2}' | tail -n +2 || { echo "Failed to list versions for $chart"; exit 1; }
   done
 }
 
