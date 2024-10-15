@@ -30,12 +30,34 @@ resource "kubernetes_namespace" "example" {
   }
 }
 
-# Deploy the NGINX Ingress Controller using Helm
+# # Deploy the NGINX Ingress Controller using Helm
+# resource "helm_release" "nginx_ingress" {
+#   name       = "nginx-ingress"
+#   repository = "bitnami"                          # Use Bitnami repository name directly
+#   chart      = "nginx-ingress-controller"
+#   version    = "11.4.4"                           # Ensure this version exists in the repository
+#   namespace  = kubernetes_namespace.example.metadata[0].name  # Use the created namespace
+
+#   values = [
+#     <<EOF
+#     controller:
+#       service:
+#         enabled: true
+#         type: LoadBalancer
+#         annotations:
+#           cloud.google.com/load-balancer-type: "External"
+#           # Add any additional annotations here
+#         loadBalancerIP: "34.44.172.58"  # Specify your static external IP here
+#     EOF
+#   ]
+# }
+
+# Deploy the NGINX Ingress Controller using Helm from the official nginx-stable repository
 resource "helm_release" "nginx_ingress" {
   name       = "nginx-ingress"
-  repository = "bitnami"                          # Use Bitnami repository name directly
-  chart      = "nginx-ingress-controller"
-  version    = "11.4.4"                           # Ensure this version exists in the repository
+  repository = "nginx-stable"                     # Use the official NGINX repository
+  chart      = "nginx-ingress"                    # Use the chart name for NGINX Ingress Controller
+  version    = "1.4.0"                            # Specify the desired chart version (check the available versions - "helm search repo nginx-stable/nginx-ingress --versions")
   namespace  = kubernetes_namespace.example.metadata[0].name  # Use the created namespace
 
   values = [
@@ -44,8 +66,8 @@ controller:
   service:
     enabled: true
     annotations:
-      cloud.google.com/load-balancer-type: External
-    loadBalancerIP: 34.44.172.58  # Specify your static external IP here
+      cloud.google.com/load-balancer-type: "External"  # Specify load balancer type
+    loadBalancerIP: "34.44.172.58"  # Specify your static external IP here
 EOF
   ]
 }
