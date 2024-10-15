@@ -4,6 +4,9 @@ data "google_container_cluster" "gke_cluster" {
   location = "us-central1-a"  # Cluster location
 }
 
+# Get the Google client configuration
+data "google_client_config" "default" {}
+
 # Define the Kubernetes provider
 provider "kubernetes" {
   host                   = "https://${data.google_container_cluster.gke_cluster.endpoint}"
