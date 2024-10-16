@@ -95,11 +95,6 @@ resource "helm_release" "eureka" {
     name  = "ENABLE_SELF_PRESERVATION"
     value = "False"
   }
-
-  #set {
-  #  name = "server.servlet.contextPath"
-  #  value = "/eureka"
-  #}
   
   set {
     name  = "replicaCount"
