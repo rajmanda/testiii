@@ -1,17 +1,17 @@
 # Step 1: Create a directory for the charts first
-resource "null_resource" "prepare_eureka_chart1" {
+resource "null_resource" "prepare_eureka_chart" {
   provisioner "local-exec" {
     command = <<EOT
       echo "Creating directory for Eureka charts..."
       mkdir -p ./eureka/charts
-      echo "Directory './eureka/charts' created successfully."
+      echo "RAJ - Directory './eureka/charts' created successfully."
     EOT
   }
 }
 
 # Step 2: Fetch and extract the charts
-resource "null_resource" "fetch_and_extract_charts1" {
-  depends_on = [null_resource.prepare_eureka_chart1]
+resource "null_resource" "fetch_and_extract_charts" {
+  depends_on = [null_resource.prepare_eureka_chart]
 
   provisioner "local-exec" {
     command = <<EOT
@@ -43,8 +43,8 @@ resource "null_resource" "fetch_and_extract_charts1" {
 }
 
 # Step 3: Move the common chart into the eureka chart's charts/ directory
-resource "null_resource" "move_common_chart1" {
-  depends_on = [null_resource.fetch_and_extract_charts1]
+resource "null_resource" "move_common_chart" {
+  depends_on = [null_resource.fetch_and_extract_charts]
 
   provisioner "local-exec" {
     command = <<EOT
@@ -63,9 +63,17 @@ resource "null_resource" "move_common_chart1" {
   }
 }
 
+# Step 4: Create namespace eureka
+resource "kubernetes_namespace" "eurekans" {
+  depends_on = [null_resource.move_common_chart]
+  metadata {
+    name = "eureka"
+  }
+}
+
 # Install the Eureka Helm chart
 resource "helm_release" "eureka" {
-  depends_on = [null_resource.move_common_chart1]
+  depends_on = [kubernetes_namespace.eurekans]
   
   name       = "my-eureka"
   chart      = "./eureka"  # Use the local directory after modifying the chart structure
