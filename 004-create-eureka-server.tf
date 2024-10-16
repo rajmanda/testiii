@@ -1,5 +1,5 @@
 # Step 1: Create a directory for the charts first
-resource "null_resource" "prepare_eureka_chart" {
+resource "null_resource" "prepare_eureka_chart1" {
   provisioner "local-exec" {
     command = <<EOT
       echo "Creating directory for Eureka charts..."
@@ -10,8 +10,8 @@ resource "null_resource" "prepare_eureka_chart" {
 }
 
 # Step 2: Fetch and extract the charts
-resource "null_resource" "fetch_and_extract_charts" {
-  depends_on = [null_resource.prepare_eureka_chart]
+resource "null_resource" "fetch_and_extract_charts1" {
+  depends_on = [null_resource.prepare_eureka_chart1]
 
   provisioner "local-exec" {
     command = <<EOT
@@ -43,8 +43,8 @@ resource "null_resource" "fetch_and_extract_charts" {
 }
 
 # Step 3: Move the common chart into the eureka chart's charts/ directory
-resource "null_resource" "move_common_chart" {
-  depends_on = [null_resource.fetch_and_extract_charts]
+resource "null_resource" "move_common_chart1" {
+  depends_on = [null_resource.fetch_and_extract_charts1]
 
   provisioner "local-exec" {
     command = <<EOT
@@ -65,7 +65,7 @@ resource "null_resource" "move_common_chart" {
 
 # Install the Eureka Helm chart
 resource "helm_release" "eureka" {
-  depends_on = [null_resource.move_common_chart]
+  depends_on = [null_resource.move_common_chart1]
   
   name       = "my-eureka"
   chart      = "./eureka"  # Use the local directory after modifying the chart structure
