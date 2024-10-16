@@ -3,6 +3,7 @@ data "google_client_config" "default" {}
 
 # Get the GKE cluster data
 data "google_container_cluster" "gke_cluster" {
+  depends_on = [ google_container_cluster.primary ]
   name     = "gke-cluster"    # Your cluster name
   location = "us-central1-a"  # Cluster location
 }
