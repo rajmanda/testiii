@@ -96,10 +96,10 @@ resource "helm_release" "eureka" {
     value = "False"
   }
 
-  set {
-    name = "server.servlet.contextPath"
-    value = "/eureka"
-  }
+  #set {
+  #  name = "server.servlet.contextPath"
+  #  value = "/eureka"
+  #}
   
   set {
     name  = "replicaCount"
