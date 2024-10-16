@@ -47,7 +47,7 @@ resource "kubernetes_namespace" "nginxns" {
 #         annotations:
 #           cloud.google.com/load-balancer-type: "External"
 #           # Add any additional annotations here
-#         loadBalancerIP: "34.44.172.58"  # Specify your static external IP here
+#         loadBalancerIP: "34.49.216.82"  # Specify your static external IP here
 #     EOF
 #   ]
 # }
