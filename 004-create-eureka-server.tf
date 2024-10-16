@@ -1,6 +1,6 @@
 # Step 1: Create a directory for the charts first
 resource "null_resource" "prepare_eureka_chart" {
-  depends_on = [ google_container_cluster.primary ]
+  depends_on = [ google_container_node_pool.primary_nodes ]
   provisioner "local-exec" {
     command = <<EOT
       echo "Creating directory for Eureka charts..."
