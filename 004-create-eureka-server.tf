@@ -1,12 +1,3 @@
-# Step 1: Create a directory for the charts
-resource "null_resource" "prepare_eureka_chart" {
-  provisioner "local-exec" {
-    command = <<EOT
-      mkdir -p ./eureka/charts
-    EOT
-  }
-}
-
 # # Step 2a: Fetch and extract the bitnami/common charts
 # resource "null_resource" "fetch_and_extract_charts_common" {
 #   depends_on = [null_resource.prepare_eureka_chart]
@@ -47,7 +38,7 @@ resource "null_resource" "prepare_eureka_chart" {
 #     EOT
 #   }
 # }
-# Step 2: Fetch and extract the charts
+# Step 1: Fetch and extract the charts
 resource "null_resource" "fetch_and_extract_charts" {
   depends_on = [null_resource.prepare_eureka_chart]
 
@@ -70,6 +61,17 @@ resource "null_resource" "fetch_and_extract_charts" {
     EOT
   }
 }
+# Step 2: Create a directory for the charts
+resource "null_resource" "prepare_eureka_chart" {
+  depends_on = [null_resource.fetch_and_extract_charts]
+
+  provisioner "local-exec" {
+    command = <<EOT
+      mkdir -p ./eureka/charts
+    EOT
+  }
+}
+
 
 # Step 3: Move the common chart into the eureka chart's charts/ directory
 resource "null_resource" "move_common_chart" {
@@ -87,7 +89,7 @@ resource "null_resource" "move_common_chart" {
   }
 }
 
-# Step 4: Install the Eureka Helm chart
+# Install the Eureka Helm chart
 resource "helm_release" "eureka" {
   depends_on = [null_resource.move_common_chart]
   
@@ -117,6 +119,7 @@ resource "helm_release" "eureka" {
     value = "1"
   }
 }
+
 
 # Optional: Output Eureka Helm release status
 output "eureka_helm_release_status" {
