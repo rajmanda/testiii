@@ -26,6 +26,7 @@ provider "helm" {
 
 # Deploy resources on GKE
 resource "kubernetes_namespace" "nginxns" {
+  depends_on = [ google_container_cluster.primary ]
   metadata {
     name = "ingress-nginx"
   }
@@ -55,6 +56,7 @@ resource "kubernetes_namespace" "nginxns" {
 
 # Deploy the NGINX Ingress Controller using Helm from the official nginx-stable repository
 resource "helm_release" "nginx_ingress" {
+  depends_on = [ google_container_cluster.primary ]
   name       = "nginx-ingress"
   repository = "nginx-stable"                     # Use the official NGINX repository
   chart      = "nginx-ingress"                    # Use the chart name for NGINX Ingress Controller
