@@ -36,14 +36,14 @@ resource "kubernetes_namespace" "nginxns" {
 
 
 # Use existing static IP in the same region
-data "google_compute_address" "existing_static_ip" {
-  name   = "regional-nginx-loadbalancer-ip"
+data "google_compute_address" "regional_static_ip" {
+  name   = "regional-ngnix-loadbalancer-ip"
   region = "us-central1"
 }
 
 # Output the existing static IP address
 output "existing_static_ip_address" {
-  value = data.google_compute_address.existing_static_ip.address
+  value = data.google_compute_address.regional_static_ip.address
 }
 
 # Helm release for NGINX ingress with the existing static IP
