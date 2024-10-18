@@ -28,18 +28,18 @@ resource "null_resource" "generate_certificate" {
 
 # Read the generated certificate and key from the file
 data "local_file" "tls_cert" {
+  depends_on = [null_resource.generate_certificate]  
   filename = "${path.module}/rajmanda-dev.crt"
-  depends_on = [null_resource.generate_certificate]
 }
 
 data "local_file" "tls_key" {
+  depends_on = [data.local_file.tls_cert]
   filename = "${path.module}/rajmanda-dev.key"
-  depends_on = [null_resource.generate_certificate]
 }
 
 # Create a Kubernetes secret using the generated certificate and key
 resource "kubernetes_secret" "rajmanda_dev_tls" {
-  depends_on = [kubernetes_namespace.nginxns]
+  depends_on = [data.local_file.tls_key]
   metadata {
     name      = "rajmanda-dev-tls"
     namespace = "kalyanam"
