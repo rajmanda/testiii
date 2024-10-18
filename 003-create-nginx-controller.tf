@@ -34,19 +34,19 @@ resource "kubernetes_namespace" "nginxns" {
   }
 }
 
-# resource "google_compute_global_address" "global_static_ip" {
-#   name = "global-ngnix-loadbalancer-ip"
-# }
 
-resource "google_compute_address" "regional_static_ip" {
-  name   = "regional-ngnix-loadbalancer-ip"
-  region = "us-central1"  # Specify the region where you want the static IP
-  lifecycle {
-    prevent_destroy = true  # Prevent Terraform from deleting this resource
-  }
+# Use existing static IP in the same region
+data "google_compute_address" "existing_static_ip" {
+  name   = "regional-nginx-loadbalancer-ip"
+  region = "us-central1"
 }
 
-# Use the nginx-stable repository for the Helm release
+# Output the existing static IP address
+output "existing_static_ip_address" {
+  value = data.google_compute_address.existing_static_ip.address
+}
+
+# Helm release for NGINX ingress with the existing static IP
 resource "helm_release" "nginx_ingress" {
   depends_on = [kubernetes_namespace.nginxns]
   name       = "nginx-ingress"
@@ -62,7 +62,7 @@ controller:
     enabled: true
     annotations:
       cloud.google.com/load-balancer-type: "External"  # Specify load balancer type
-    loadBalancerIP: "${google_compute_address.regional_static_ip.address}"  # Reference the static IP created above
+    loadBalancerIP: "${data.google_compute_address.existing_static_ip.address}"  # Reference existing static IP
   metrics:
     enabled: true
   replicaCount: 1  # Set number of replicas to 1
@@ -75,4 +75,3 @@ EOF
     type  = "string"
   }
 }
-
