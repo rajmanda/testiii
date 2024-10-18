@@ -62,8 +62,7 @@ controller:
     enabled: true
     annotations:
       cloud.google.com/load-balancer-type: "External"  # Specify load balancer type
-    #loadBalancerIP: "${data.google_compute_address.existing_static_ip.address}"  # Reference existing static IP
-    loadBalancerIP: "${data.google_compute_address.existing_static_ip.existing_static_ip_address}"   # Reference existing static IP from output variable
+    loadBalancerIP: "${data.google_compute_address.existing_static_ip.address}"  # Reference existing static IP
   metrics:
     enabled: true
   replicaCount: 1  # Set number of replicas to 1
