@@ -14,9 +14,9 @@ resource "null_resource" "generate_certificate" {
   provisioner "local-exec" {
     command = <<EOT
       openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-      -keyout ${path.root}/rajmanda-dev.key \
-      -out ${path.root}/rajmanda-dev.crt \
-      -subj "/CN=rajmanda-dev.com"
+      -keyout rajmanda-dev.key \
+      -out rajmanda-dev.crt \
+      -subj "CN=rajmanda-dev.com"
     EOT
   }
 
@@ -29,12 +29,12 @@ resource "null_resource" "generate_certificate" {
 # Read the generated certificate and key from the file
 data "local_file" "tls_cert" {
   depends_on = [null_resource.generate_certificate]  
-  filename = " ${path.root}/rajmanda-dev.crt"
+  filename = " rajmanda-dev.crt"
 }
 
 data "local_file" "tls_key" {
   depends_on = [data.local_file.tls_cert]
-  filename = " ${path.root}/rajmanda-dev.key"
+  filename = " rajmanda-dev.key"
 }
 
 # Create a Kubernetes secret using the generated certificate and key
