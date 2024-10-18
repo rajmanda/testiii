@@ -5,3 +5,6 @@ resource "google_compute_address" "regional_static_ip" {
     prevent_destroy = true  # Prevent Terraform from deleting this resource
   }
 }
+output "static_ip_address" {
+  value = google_compute_address.regional_static_ip.address
+}
