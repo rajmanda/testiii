@@ -1,64 +1,59 @@
+output "kubernetes_cluster_endpoint" {
+  value = data.google_container_cluster.primary.endpoint
+}
+
 # Get the Google client configuration
 data "google_client_config" "default" {}
 
 # Get the GKE cluster data
-data "google_container_cluster" "gke_cluster" {
-  name     = "gke-cluster"    # Your cluster name
-  location = "us-central1-a"  # Cluster location
+data "google_container_cluster" "primary" {
+  name     = "simple-autopilot-public-cluster"  # Replace with your GKE cluster name
+  location = "us-central1"  # Adjust as needed
 }
 
-# Define the Kubernetes provider
 provider "kubernetes" {
-  host                   = "https://${data.google_container_cluster.gke_cluster.endpoint}"
+  host                   = "https://${module.kubernetes-engine_example_simple_autopilot_public.kubernetes_endpoint}"
   token                  = data.google_client_config.default.access_token
-  cluster_ca_certificate = base64decode(data.google_container_cluster.gke_cluster.master_auth.0.cluster_ca_certificate)
+  cluster_ca_certificate = base64decode(data.google_container_cluster.primary.master_auth[0].cluster_ca_certificate)
 }
 
 # Define the Helm provider
 provider "helm" {
   kubernetes {
-    host                   = "https://${data.google_container_cluster.gke_cluster.endpoint}"
+    host                   = "https://${module.kubernetes-engine_example_simple_autopilot_public.kubernetes_endpoint}"
     token                  = data.google_client_config.default.access_token
-    cluster_ca_certificate = base64decode(data.google_container_cluster.gke_cluster.master_auth.0.cluster_ca_certificate)
+    cluster_ca_certificate = base64decode(data.google_container_cluster.primary.master_auth[0].cluster_ca_certificate)
   }
 }
 
 # Deploy resources on GKE
 resource "kubernetes_namespace" "nginxns" {
+  depends_on = [module.kubernetes-engine_example_simple_autopilot_public]
   metadata {
     name = "ingress-nginx"
   }
 }
 
-# # Deploy the NGINX Ingress Controller using Helm
-# resource "helm_release" "nginx_ingress" {
-#   name       = "nginx-ingress"
-#   repository = "bitnami"                          # Use Bitnami repository name directly
-#   chart      = "nginx-ingress-controller"
-#   version    = "11.4.4"                           # Ensure this version exists in the repository
-#   namespace  = kubernetes_namespace.nginxns.metadata[0].name  # Use the created namespace
-
-#   values = [
-#     <<EOF
-#     controller:
-#       service:
-#         enabled: true
-#         type: LoadBalancer
-#         annotations:
-#           cloud.google.com/load-balancer-type: "External"
-#           # Add any additional annotations here
-#         loadBalancerIP: "34.49.216.82"  # Specify your static external IP here
-#     EOF
-#   ]
+# resource "google_compute_global_address" "global_static_ip" {
+#   name = "global-ngnix-loadbalancer-ip"
 # }
 
-# Deploy the NGINX Ingress Controller using Helm from the official nginx-stable repository
+resource "google_compute_address" "regional_static_ip" {
+  name   = "regional-ngnix-loadbalancer-ip"
+  region = "us-central1"  # Specify the region where you want the static IP
+  lifecycle {
+    prevent_destroy = true  # Prevent Terraform from deleting this resource
+  }
+}
+
+# Use the nginx-stable repository for the Helm release
 resource "helm_release" "nginx_ingress" {
+  depends_on = [kubernetes_namespace.nginxns]
   name       = "nginx-ingress"
-  repository = "nginx-stable"                     # Use the official NGINX repository
-  chart      = "nginx-ingress"                    # Use the chart name for NGINX Ingress Controller
-  version    = "1.4.0"                            # Specify the desired chart version (check the available versions - "helm search repo nginx-stable/nginx-ingress --versions")
-  namespace  = kubernetes_namespace.nginxns.metadata[0].name  # Use the created namespace
+  repository = "https://helm.nginx.com/stable"
+  chart      = "nginx-ingress"
+  version    = "1.4.0"  # Specify the desired chart version
+  namespace  = kubernetes_namespace.nginxns.metadata[0].name  # Specify the namespace
 
   values = [
     <<EOF
@@ -67,12 +62,17 @@ controller:
     enabled: true
     annotations:
       cloud.google.com/load-balancer-type: "External"  # Specify load balancer type
-    loadBalancerIP: "34.172.15.181"  # Specify your static external IP here
+    loadBalancerIP: "${google_compute_address.regional_static_ip.address}"  # Reference the static IP created above
+  metrics:
+    enabled: true
+  replicaCount: 1  # Set number of replicas to 1
 EOF
   ]
+
+  set {
+    name  = "controller.service.annotations.prometheus\\.io/port"
+    value = "9127"
+    type  = "string"
+  }
 }
 
-# Output the NGINX Ingress Controller service endpoint
-output "nginx_ingress_service" {
-  value = helm_release.nginx_ingress.status
-}
