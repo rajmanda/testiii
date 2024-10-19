@@ -14,7 +14,7 @@ provider "tls" {}
 
 # Generate a private key
 resource "tls_private_key" "example" {
-  depends_on = [ kubernetes_namespace.eureka ]
+  depends_on = [ kubernetes_namespace.eurekans ]
   algorithm = "RSA"
   rsa_bits  = 2048
 }
