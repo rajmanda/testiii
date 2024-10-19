@@ -26,11 +26,8 @@ resource "tls_self_signed_cert" "example" {
   }
 
   # List of DNS names for which the certificate is valid
-  dns_names = [
-    "rajmanda-dev.com",
-    "www.rajmanda-dev.com",
-  ]
-  
+  dns_names = ["rajmanda-dev.com", "www.rajmanda-dev.com"]  # Add SAN entries here
+
   validity_period_hours = 24 * 365
 
   allowed_uses = [
