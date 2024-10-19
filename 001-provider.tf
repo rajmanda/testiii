@@ -5,7 +5,21 @@ provider "google" {
 
 terraform {
   backend "gcs" {
-    bucket  = "tf-gcp-wif-tfstate"
-    prefix  = "terraform/state"   # Optional, used for organization within the bucket
+    bucket = "tf-gcp-wif-tfstate"
+    prefix = "terraform/state/${var.branch_name}"  # Use branch name as prefix
+  }
+}
+
+variable "branch_name" {
+  description = "The name of the current git branch"
+  type        = string
+  default     = "tf-create-gke-cluster"  # Default branch name
+}
+
+resource "google_storage_bucket" "tf_state" {
+  name     = "tf-gcp-wif-tfstate"
+  location = "US"
+  versioning {
+    enabled = true
   }
 }
