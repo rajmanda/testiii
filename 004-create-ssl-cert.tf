@@ -33,13 +33,13 @@ resource "null_resource" "delay_after_certificate_generation" {
 # Read the generated certificate
 data "local_file" "tls_cert" {
   depends_on = [null_resource.delay_after_certificate_generation]
-  filename   = "${path.module}/rajmanda-dev.crt"
+  filename   = "${path.module}/scripts/rajmanda-dev.crt"
 }
 
 # Read the generated private key
 data "local_file" "tls_key" {
   depends_on = [data.local_file.tls_cert]
-  filename   = "${path.module}/rajmanda-dev.key"
+  filename   = "${path.module}/scripts/rajmanda-dev.key"
 }
 
 # Create a Kubernetes secret to store the TLS certificate and private key
