@@ -1,4 +1,7 @@
-# # Data block to refer to the existing GKE cluster
+# # Get the Google client configuration
+data "google_client_config" "default" {}
+
+# Data block to refer to the existing GKE cluster
 data "google_container_cluster" "existing" {
   name     = "simple-autopilot-public-cluster"  # Replace with your GKE cluster name
   location = "us-central1"                      # Replace with your cluster location
