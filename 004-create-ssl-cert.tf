@@ -25,6 +25,12 @@ resource "tls_self_signed_cert" "example" {
     organization = "Rajmanda, LLC"
   }
 
+  # List of DNS names for which the certificate is valid
+  dns_names = [
+    "rajmanda-dev.com",
+    "www.rajmanda-dev.com",
+  ]
+  
   validity_period_hours = 24 * 365
 
   allowed_uses = [
