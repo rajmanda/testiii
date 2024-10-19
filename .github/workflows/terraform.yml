@@ -39,9 +39,6 @@ jobs:
       with:
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
-    - name: Terraform Init
-      run: terraform init
-
     # Create or select the workspace based on the branch name
     - name: Set up Terraform workspace
       run: |
@@ -53,8 +50,13 @@ jobs:
           WORKSPACE_NAME="${{ github.ref }}"; WORKSPACE_NAME=${WORKSPACE_NAME//\//-}
         fi
         
-        # Create the workspace if it doesn't exist and select it
+    - name: Terraform Init
+      run: |
+        # use the workspace created above
         terraform workspace select $WORKSPACE_NAME || terraform workspace new $WORKSPACE_NAME
+        terraform init \
+          -backend-config="bucket=tf-gcp-wif-tfstate" \
+          -backend-config="prefix=terraform/state/${WORKSPACE_NAME}"  # Use the workspace name in the prefix
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
