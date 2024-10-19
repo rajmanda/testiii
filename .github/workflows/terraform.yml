@@ -26,15 +26,18 @@ jobs:
     steps:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
+      id: checkout
       uses: actions/checkout@v3
 
     - id: auth
+      name: Authenticate with Google Cloud
       uses: google-github-actions/auth@v2.0.0  
       with:
         workload_identity_provider: 'projects/175415323680/locations/global/workloadIdentityPools/githubpool/providers/github'
         service_account: github-wif-sa@properties-app-418208.iam.gserviceaccount.com
 
     - name: Setup Terraform
+      id: setup_terraform
       uses: hashicorp/setup-terraform@v1
       with:
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
@@ -51,27 +54,33 @@ jobs:
           WORKSPACE_NAME="${{ github.ref }}"; WORKSPACE_NAME=${WORKSPACE_NAME//\//-}
           echo "WORKSPACE_NAME=${WORKSPACE_NAME}" >> $GITHUB_ENV
         fi
-        
+
     - name: Terraform Init
+      id: terraform_init
       run: |
-        # use the workspace created above
-        terraform workspace select $WORKSPACE_NAME || terraform workspace new $WORKSPACE_NAME
         terraform init \
           -backend-config="bucket=tf-gcp-wif-tfstate" \
-          -backend-config="prefix=terraform/state/${WORKSPACE_NAME}"  # Use the workspace name in the prefix
+          -backend-config="prefix=terraform/state/${{ env.WORKSPACE_NAME }}"  # Use the workspace name in the prefix
+
+    - name: Select Terraform Workspace
+      id: select_workspace
+      run: |
+        terraform workspace select "${{ env.WORKSPACE_NAME }}" || terraform workspace new "${{ env.WORKSPACE_NAME }}"
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
+      id: terraform_plan
       run: terraform plan -input=false
 
     - name: Terraform Apply
+      id: terraform_apply
       run: terraform apply -auto-approve -input=false
-
 
     # Generates a destruction plan for Terraform
     # - name: Terraform Plan Destroy
+    #   id: terraform_plan_destroy
     #   run: terraform plan -destroy -input=false
 
     # - name: Terraform Destroy
+    #   id: terraform_destroy
     #   run: terraform destroy -auto-approve -input=false
-      
