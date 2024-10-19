@@ -1,25 +1,32 @@
-# # Get the Google client configuration
-data "google_client_config" "default" {}
-
 # Data block to refer to the existing GKE cluster
 data "google_container_cluster" "existing" {
   name     = "simple-autopilot-public-cluster"  # Replace with your GKE cluster name
   location = "us-central1"                      # Replace with your cluster location
 }
 
-# Define the Kubernetes provider
+# Get the Google client configuration
+data "google_client_config" "default" {}
+
+# Get the GKE cluster data
+data "google_container_cluster" "primary" {
+  name     = "simple-autopilot-public-cluster"  # Replace with your GKE cluster name
+  location = "us-central1"  # Adjust as needed
+}
+
 provider "kubernetes" {
-  host                   = "https://${data.google_container_cluster.gke_cluster.endpoint}"
+  #host                   = "https://${module.kubernetes-engine_example_simple_autopilot_public.kubernetes_endpoint}"
+  host                   = "https://${data.google_container_cluster.existing.endpoint}"
   token                  = data.google_client_config.default.access_token
-  cluster_ca_certificate = base64decode(data.google_container_cluster.gke_cluster.master_auth.0.cluster_ca_certificate)
+  cluster_ca_certificate = base64decode(data.google_container_cluster.primary.master_auth[0].cluster_ca_certificate)
 }
 
 # Define the Helm provider
 provider "helm" {
   kubernetes {
-    host                   = "https://${data.google_container_cluster.gke_cluster.endpoint}"
+    #host                   = "https://${module.kubernetes-engine_example_simple_autopilot_public.kubernetes_endpoint}"
+    host                   = "https://${data.google_container_cluster.existing.endpoint}"
     token                  = data.google_client_config.default.access_token
-    cluster_ca_certificate = base64decode(data.google_container_cluster.gke_cluster.master_auth.0.cluster_ca_certificate)
+    cluster_ca_certificate = base64decode(data.google_container_cluster.primary.master_auth[0].cluster_ca_certificate)
   }
 }
 
