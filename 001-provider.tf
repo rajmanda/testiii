@@ -8,11 +8,4 @@ terraform {
     bucket = "tf-gcp-wif-tfstate"
     prefix = "terraform/state"  # Static prefix
   }
-
-}
-
-variable "branch_name" {
-  description = "The name of the current git branch"
-  type        = string
-  default     = "tf-create-gke-cluster"  # Default branch name
 }
