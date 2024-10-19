@@ -8,9 +8,7 @@ terraform {
     bucket = "tf-gcp-wif-tfstate"
     prefix = "terraform/state"  # Static prefix
   }
-  backend "local" {
-    path = "terraform.tfstate"  # Path for the local state file
-  }
+
 }
 
 variable "branch_name" {
