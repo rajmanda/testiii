@@ -1,6 +1,7 @@
 # Deploy resources on GKE
 resource "kubernetes_namespace" "kalyanam" {
-  depends_on = [module.kubernetes-engine_example_simple_autopilot_public]
+  #depends_on = [module.kubernetes-engine_example_simple_autopilot_public]
+  depends_on = [ data.google_container_cluster.existing ]
   metadata {
     name = "kalyanam"
   }
