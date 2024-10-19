@@ -1,16 +1,13 @@
 #!/bin/bash
 
-# Check if the key and certificate already exist
-if [[ -f ./rajmanda-dev.key ]] && [[ -f ./rajmanda-dev.crt ]]; then
-    echo "Key and Certificate already exist."
-else
-    echo "Generating self-signed certificate and key..."
-    
-    # Generate self-signed certificate using OpenSSL
-    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-      -keyout ./rajmanda-dev.key \
-      -out ./rajmanda-dev.crt \
-      -subj "/CN=rajmanda-dev.com"
-      
-    echo "Self-signed certificate and key have been generated."
-fi
+# Create dummy TLS certificate and key files
+echo "-----BEGIN CERTIFICATE-----" > ./rajmanda-dev.crt
+echo "Dummy Certificate" >> ./rajmanda-dev.crt
+echo "-----END CERTIFICATE-----" >> ./rajmanda-dev.crt
+
+echo "-----BEGIN PRIVATE KEY-----" > ./rajmanda-dev.key
+echo "Dummy Private Key" >> ./rajmanda-dev.key
+echo "-----END PRIVATE KEY-----" >> ./rajmanda-dev.key
+
+echo "Dummy files created."
+
