@@ -6,17 +6,14 @@ resource "kubernetes_namespace" "kalyanam" {
   }
 }
 
-# Create a self-signed certificate using OpenSSL and save the output to the local directory
+# Make the Bash script executable and run it to generate the certificate
 resource "null_resource" "generate_certificate" {
   depends_on = [kubernetes_namespace.kalyanam]
 
   provisioner "local-exec" {
     command = <<EOT
-      openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-      -keyout ${path.module}/rajmanda-dev.key \
-      -out ${path.module}/rajmanda-dev.crt \
-      -subj "/CN=rajmanda-dev.com"
-      chmod 644 rajmanda-dev.key rajmanda-dev.crt  # Ensure read permissions
+      chmod +x ./generate_certificate.sh
+      ./generate_certificate.sh ./rajmanda-dev.crt ./rajmanda-dev.key
     EOT
   }
 
@@ -25,7 +22,7 @@ resource "null_resource" "generate_certificate" {
   }
 }
 
-# Optional: Introduce a delay to ensure the file is generated properly
+# Optional: Introduce a delay to ensure the files are generated properly
 resource "null_resource" "delay_after_certificate_generation" {
   depends_on = [null_resource.generate_certificate]
   provisioner "local-exec" {
