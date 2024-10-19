@@ -1,8 +1,17 @@
+# Deploy resources on GKE
+resource "kubernetes_namespace" "kalyanam" {
+  depends_on = [module.kubernetes-engine_example_simple_autopilot_public]
+  metadata {
+    name = "kalyanam"
+  }
+}
+
 # Configure the TLS provider
 provider "tls" {}
 
 # Generate a private key
 resource "tls_private_key" "example" {
+  depends_on = [ kubernetes_namespace.kalyanam ]
   algorithm = "RSA"
   rsa_bits  = 2048
 }
