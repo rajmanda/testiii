@@ -5,8 +5,8 @@ provider "google" {
 
 terraform {
   backend "gcs" {
-    bucket = "tf-gcp-wif-tfstate"
-    prefix = "terraform/state/${var.branch_name}"  # Use branch name as prefix
+    bucket  = "tf-gcp-wif-tfstate"
+    prefix  = "terraform/state/${terraform.workspace}"  # Uses the current workspace as prefix
   }
 }
 

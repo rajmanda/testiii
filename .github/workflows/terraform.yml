@@ -39,6 +39,18 @@ jobs:
       with:
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
+    # Create or select the workspace based on the branch name
+    - name: Set up Terraform workspace
+      run: |
+        # Set the workspace name based on the current branch
+        if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+          WORKSPACE_NAME="main"
+        else
+          WORKSPACE_NAME="${{ github.ref_name }}"
+        fi
+        
+        # Create the workspace if it doesn't exist and select it
+        terraform workspace select $WORKSPACE_NAME || terraform workspace new $WORKSPACE_NAME
 
     - name: Terraform Init
       run: terraform init
