@@ -7,3 +7,4 @@ terraform.tfstate.backup
 .terraform/providers/registry.terraform.io/hashicorp/google/6.6.0/darwin_amd64/terraform-provider-google_v6.6.0_x5
 .terraform/modules/*
 .terraform/providers/*
+.terraform/*
