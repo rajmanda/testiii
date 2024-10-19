@@ -41,13 +41,15 @@ jobs:
 
     # Create or select the workspace based on the branch name
     - name: Set up Terraform workspace
+      id: setup_workspace
       run: |
         # Set the workspace name based on the current branch
         if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-          WORKSPACE_NAME="main"
+          echo "WORKSPACE_NAME=main" >> $GITHUB_ENV
         else
           # Replace slashes with dashes for workspace name
           WORKSPACE_NAME="${{ github.ref }}"; WORKSPACE_NAME=${WORKSPACE_NAME//\//-}
+          echo "WORKSPACE_NAME=${WORKSPACE_NAME}" >> $GITHUB_ENV
         fi
         
     - name: Terraform Init
