@@ -47,8 +47,7 @@ jobs:
           WORKSPACE_NAME="main"
         else
           # Replace slashes with dashes for workspace name
-          WWORKSPACE_NAME="${{ github.ref }}"; 
-          WORKSPACE_NAME=${WORKSPACE_NAME//\//-}
+          WORKSPACE_NAME="${{ github.ref }}"; WORKSPACE_NAME=${WORKSPACE_NAME//\//-}
         fi
         
         # Create the workspace if it doesn't exist and select it
