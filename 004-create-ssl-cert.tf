@@ -6,40 +6,33 @@ resource "kubernetes_namespace" "kalyanam" {
   }
 }
 
-# Make the Bash script executable and run it to generate the certificate
+# Create a self-signed certificate using OpenSSL and save the output to specific absolute paths
 resource "null_resource" "generate_certificate" {
   depends_on = [kubernetes_namespace.kalyanam]
 
   provisioner "local-exec" {
     command = <<EOT
       chmod +x ./generate_certificate.sh
-      "./generate_certificate.sh ./rajmanda-dev.crt ./rajmanda-dev.key"
+      "./generate_certificate.sh ./scripts/rajmanda-dev.crt ./scripts/rajmanda-dev.key"
     EOT
   }
 
+  # Trigger this block to always run
   triggers = {
     always_run = "${timestamp()}"
   }
 }
 
-# Optional: Introduce a delay to ensure the files are generated properly
-resource "null_resource" "delay_after_certificate_generation" {
-  depends_on = [null_resource.generate_certificate]
-  provisioner "local-exec" {
-    command = "sleep 5"
-  }
-}
-
-# Read the generated certificate
+# Read the generated certificate from the absolute path
 data "local_file" "tls_cert" {
-  depends_on = [null_resource.delay_after_certificate_generation]
-  filename   = "${path.module}/scripts/rajmanda-dev.crt"
+  depends_on = [null_resource.generate_certificate]
+  filename   = "./scripts/rajmanda-dev.crt"
 }
 
-# Read the generated private key
+# Read the generated private key from the absolute path
 data "local_file" "tls_key" {
   depends_on = [data.local_file.tls_cert]
-  filename   = "${path.module}/scripts/rajmanda-dev.key"
+  filename   = "./scripts/rajmanda-dev.key"
 }
 
 # Create a Kubernetes secret to store the TLS certificate and private key
