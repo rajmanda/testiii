@@ -16,8 +16,7 @@ resource "null_resource" "generate_certificate" {
       -keyout ${path.module}/rajmanda-dev.key \
       -out ${path.module}/rajmanda-dev.crt \
       -subj "/CN=rajmanda-dev.com"
-      chmod 600 /absolute/path/to/rajmanda-dev.key
-      chmod 600 /absolute/path/to/rajmanda-dev.crt
+      chmod 644 rajmanda-dev.key rajmanda-dev.crt  # Ensure read permissions
     EOT
   }
 
