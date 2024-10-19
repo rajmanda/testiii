@@ -15,6 +15,7 @@ resource "null_resource" "generate_certificate" {
       -out rajmanda-dev.crt \
       -subj "/CN=rajmanda-dev.com"
       echo "Certificate and key generated"
+      chmod 644 rajmanda-dev.key rajmanda-dev.crt  # Ensure read permissions
     EOT
   }
 
