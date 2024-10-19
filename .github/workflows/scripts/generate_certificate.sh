@@ -1,20 +1,25 @@
 #!/bin/bash
 
-# Define the paths for the certificate and key
-CERT_PATH="${1:-./rajmanda-dev.crt}"
-KEY_PATH="${2:-./rajmanda-dev.key}"
-
-# Generate the self-signed certificate using OpenSSL
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-    -keyout "$KEY_PATH" \
-    -out "$CERT_PATH" \
-    -subj "/CN=rajmanda-dev.com"
-
-# Check if the files were created successfully
-if [[ -f "$CERT_PATH" && -f "$KEY_PATH" ]]; then
-    echo "Certificate and key successfully generated at $CERT_PATH and $KEY_PATH"
-    exit 0
+# Check if the key and certificate already exist
+if [[ -f ./rajmanda-dev.key ]]; then
+    echo "Key file already exists:"
+    ls -l ./rajmanda-dev.key
 else
-    echo "Error: Certificate or key not generated!"
-    exit 1
+    echo "Key file does not exist, will be generated."
 fi
+
+if [[ -f ./rajmanda-dev.crt ]]; then
+    echo "Certificate file already exists:"
+    ls -l ./rajmanda-dev.crt
+else
+    echo "Certificate file does not exist, will be generated."
+fi
+
+# Generate self-signed certificate using OpenSSL
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  -keyout ./rajmanda-dev.key \
+  -out ./rajmanda-dev.crt \
+  -subj "/CN=rajmanda-dev.com"
+
+# Display success message
+echo "Self-signed certificate and key have been generated."

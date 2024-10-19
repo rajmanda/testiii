@@ -13,7 +13,7 @@ resource "null_resource" "generate_certificate" {
   provisioner "local-exec" {
     command = <<EOT
       chmod +x ./generate_certificate.sh
-      ./generate_certificate.sh ./rajmanda-dev.crt ./rajmanda-dev.key
+      "./generate_certificate.sh ./rajmanda-dev.crt ./rajmanda-dev.key"
     EOT
   }
 
