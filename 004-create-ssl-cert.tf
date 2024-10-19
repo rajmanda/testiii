@@ -40,7 +40,7 @@ resource "tls_self_signed_cert" "example" {
 # Create a Kubernetes Secret from the generated TLS certificate and key
 resource "kubernetes_secret" "tls_secret" {
   metadata {
-    name      = "tls-secret"
+    name      = "rajmanda-dev-tls"
     namespace = "kalyanam"
   }
 
