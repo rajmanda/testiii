@@ -1,9 +1,15 @@
 # Configure the TLS provider
 provider "tls" {}
 
+# Generate a private key
+resource "tls_private_key" "example" {
+  algorithm = "RSA"
+  rsa_bits  = 2048
+}
+
 # Generate a self-signed TLS certificate
 resource "tls_self_signed_cert" "example" {
-  private_key_pem = file("private_key.pem")
+  private_key_pem = tls_private_key.example.private_key_pem
 
   subject {
     common_name  = "rajmanda-dev.com"
@@ -27,8 +33,8 @@ resource "kubernetes_secret" "tls_secret" {
   }
 
   data = {
-    tls.crt = tls_self_signed_cert.example[0].cert_pem
-    tls.key = tls_self_signed_cert.example[0].private_key_pem
+    tls.crt = tls_self_signed_cert.example.cert_pem
+    tls.key = tls_private_key.example.private_key_pem
   }
 
   type = "kubernetes.io/tls"
