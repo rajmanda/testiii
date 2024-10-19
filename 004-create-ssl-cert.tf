@@ -6,7 +6,6 @@ resource "kubernetes_namespace" "kalyanam" {
   }
 }
 
-# Generate a self-signed certificate using OpenSSL
 resource "null_resource" "generate_certificate" {
   depends_on = [kubernetes_namespace.kalyanam]
   provisioner "local-exec" {
@@ -15,25 +14,33 @@ resource "null_resource" "generate_certificate" {
       -keyout rajmanda-dev.key \
       -out rajmanda-dev.crt \
       -subj "/CN=rajmanda-dev.com"
+      echo "Certificate and key generated"
     EOT
   }
 
-  # Run this only if the certificate does not already exist
   triggers = {
     always_run = "${timestamp()}"
   }
 }
 
-# Read the generated certificate and key from the file
+resource "null_resource" "delay" {
+  depends_on = [null_resource.generate_certificate]
+  provisioner "local-exec" {
+    command = "sleep 10"  # Add a delay to ensure files are available
+  }
+}
+
+
 data "local_file" "tls_cert" {
-  depends_on = [null_resource.generate_certificate]  
-  filename   = "${path.module}/rajmanda-dev.crt"  # Ensure the file path is correct
+  depends_on = [null_resource.generate_certificate]
+  filename   = "${path.cwd}/rajmanda-dev.crt"  # Use ${path.cwd} to ensure correct absolute path
 }
 
 data "local_file" "tls_key" {
   depends_on = [data.local_file.tls_cert]
-  filename   = "${path.module}/rajmanda-dev.key"  # Ensure the file path is correct
+  filename   = "${path.cwd}/rajmanda-dev.key"  # Use ${path.cwd} to ensure correct absolute path
 }
+
 
 # Create a Kubernetes secret using the generated certificate and key
 resource "kubernetes_secret" "rajmanda_dev_tls" {
