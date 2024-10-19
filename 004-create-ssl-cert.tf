@@ -33,8 +33,8 @@ resource "kubernetes_secret" "tls_secret" {
   }
 
   data = {
-    tls.crt = tls_self_signed_cert.example.cert_pem  # Correct reference
-    tls.key = tls_private_key.example.private_key_pem  # Correct reference
+    "tls.crt" = tls_self_signed_cert.example.cert_pem  # Correct key name
+    "tls.key" = tls_private_key.example.private_key_pem  # Correct key name
   }
 
   type = "kubernetes.io/tls"
