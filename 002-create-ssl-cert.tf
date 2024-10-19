@@ -1,5 +1,7 @@
 # Deploy resources on GKE
-resource "kubernetes_namespace" "eureka" {
+
+# Step 1: Create namespace eureka
+resource "kubernetes_namespace" "eurekans" {
   #depends_on = [module.kubernetes-engine_example_simple_autopilot_public]
   depends_on = [ data.google_container_cluster.existing ]
   metadata {

@@ -96,14 +96,6 @@ resource "null_resource" "move_common_chart" {
   }
 }
 
-# Step 4: Create namespace eureka
-resource "kubernetes_namespace" "eurekans" {
-  depends_on = [null_resource.move_common_chart]
-  metadata {
-    name = "eureka"
-  }
-}
-
 # Install the Eureka Helm chart
 resource "helm_release" "eureka" {
   depends_on = [kubernetes_namespace.eurekans]
