@@ -1,13 +1,13 @@
 #Declare all the resources that are already present 
 
-# Data resource for existing Kubernetes Namespace
+# Kubernetes Namespace - Use Data Resource for Existing Namespace
 data "kubernetes_namespace" "eurekans" {
   metadata {
     name = "eureka"
   }
 }
 
-# Data resource for existing Kubernetes Secret
+# Kubernetes Secret - Use Data Resource for Existing Secret
 data "kubernetes_secret" "tls_secret" {
   metadata {
     name      = "rajmanda-dev-tls"
@@ -15,49 +15,52 @@ data "kubernetes_secret" "tls_secret" {
   }
 }
 
-# Data resource for existing Helm Release
-data "helm_release" "eureka" {
-  name      = "my-eureka"
+# Helm Release - Manage Helm Release (remove the data block)
+resource "helm_release" "eureka" {
+  atomic  = false
+  chart   = "./eureka"
+  name    = "my-eureka"
+  version = "2.0.0"
   namespace = "eureka"
-}
 
-# Use the data resource to fetch the existing Kubernetes cluster information
-data "google_container_cluster" "primary" {
-  name     = "simple-autopilot-public-cluster"
-  location = "us-central1"
-}
+  set {
+    name  = "ENABLE_SELF_PRESERVATION"
+    value = "False"
+  }
 
-# Use the data resource to fetch the existing client configuration
-data "google_client_config" "default" {}
+  set {
+    name  = "FETCH_REGISTRY"
+    value = "False"
+  }
 
-# Use null resources for chart extraction and preparation
-resource "null_resource" "fetch_and_extract_charts" {
-  provisioner "local-exec" {
-    command = "echo 'Fetching and extracting charts...'"
+  set {
+    name  = "REGISTER_WITH_EUREKA"
+    value = "False"
+  }
+
+  set {
+    name  = "replicaCount"
+    value = "1"
   }
 }
 
-resource "null_resource" "move_common_chart" {
-  provisioner "local-exec" {
-    command = "echo 'Moving common chart...'"
-  }
-}
+# TLS Key and Cert should not use data resources since they are not supported
+# You may reference the keys/certs from external files instead if you already have them.
 
-resource "null_resource" "prepare_eureka_chart" {
-  provisioner "local-exec" {
-    command = "echo 'Preparing Eureka chart...'"
-  }
-}
-
-# Data resource for existing TLS private key
-data "tls_private_key" "example" {
+resource "tls_private_key" "example" {
   algorithm = "RSA"
+  rsa_bits  = 2048
 }
 
-# Data resource for existing self-signed certificate
-data "tls_self_signed_cert" "example" {
-  dns_names = [
-    "rajmanda-dev.com",
-    "www.rajmanda-dev.com",
-  ]
+resource "tls_self_signed_cert" "example" {
+  private_key_pem = tls_private_key.example.private_key_pem
+  dns_names       = ["rajmanda-dev.com", "www.rajmanda-dev.com"]
+  validity_period_hours = 8760
+
+  subject {
+    common_name  = "rajmanda-dev.com"
+    organization = "Rajmanda, LLC"
+  }
+
+  allowed_uses = ["key_encipherment", "digital_signature", "server_auth"]
 }
