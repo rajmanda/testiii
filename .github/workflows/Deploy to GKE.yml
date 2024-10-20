@@ -1,6 +1,4 @@
-name: Deploy to GKE
-
-# Trigger the workflow whenever changes are pushed to the deploy-kalyanam directory
+# Trigger the workflow whenever changes are pushed to the deploy directory
 on:
   push:
     paths:
@@ -10,19 +8,18 @@ jobs:
   checkout-manifests:
     runs-on: ubuntu-latest
     steps:
-      # Steps to update your manifest files (if any)
-      # e.g., checkout, update logic, etc.
+      # Step 1: Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
       # Step 2: Get the list of changed files
       - name: Get changed files
-      run: |
-        git fetch --depth=2
-        git diff --name-only HEAD^ HEAD > changed_files.txt
-        cat changed_files.txt
-        echo "CHANGED_FILES=$(cat changed_files.txt | tr '\n' ' ')" >> $GITHUB_ENV  # Export changed files to environment variable
-  
+        run: |
+          git fetch --depth=2
+          git diff --name-only HEAD^ HEAD > changed_files.txt
+          cat changed_files.txt
+          echo "CHANGED_FILES=$(cat changed_files.txt | tr '\n' ' ')" >> $GITHUB_ENV  # Export changed files to environment variable
+
   deploy:
     runs-on: ubuntu-latest
     needs: checkout-manifests  # Ensure this job runs after the checkout-manifests
@@ -30,15 +27,18 @@ jobs:
       contents: read
       id-token: write  # Make sure this is present
     steps:
+      # Step 1: Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Step 2: Authenticate to GCP
       - name: Authenticate to GCP
         uses: google-github-actions/auth@v2.0.0
         with:
           workload_identity_provider: 'projects/175415323680/locations/global/workloadIdentityPools/githubpool/providers/github'
           service_account: github-wif-sa@properties-app-418208.iam.gserviceaccount.com
 
+      # Step 3: Set up GKE credentials
       - name: Set up GKE credentials
         uses: google-github-actions/get-gke-credentials@v1
         with:
@@ -55,19 +55,3 @@ jobs:
           done
         env:
           CHANGED_FILES: ${{ env.CHANGED_FILES }}
-
-      # - name: Get list of changed files
-      #   id: changed_files
-      #   run: |
-      #     # Get a list of changed files in the deploy/ directory
-      #     CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- 'deploy/**')
-      #     echo "changed_files=$CHANGED_FILES" >> $GITHUB_ENV
-
-      # - name: Apply changed deployment files
-      #   run: |
-      #     for file in $CHANGED_FILES; do
-      #       echo "Applying $file"
-      #       kubectl apply -f $file
-      #     done
-      #   env:
-      #     CHANGED_FILES: ${{ env.changed_files }}
