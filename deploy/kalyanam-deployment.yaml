@@ -120,3 +120,4 @@ spec:
                 name: my-eureka  # Give the  Name of your Eureka service
                 port:
                   number: 8761
+                  
