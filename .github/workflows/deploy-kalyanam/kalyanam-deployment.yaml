@@ -1,0 +1,122 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  name: kalyanam
+  labels:
+    app: kalyanam
+  namespace: kalyanam
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kalyanam
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: kalyanam
+    spec:
+      containers:
+        - name: angular-app-container
+          image: dockerrajmanda/kalyanam:82
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kalyanam
+  namespace: kalyanam
+spec:
+  selector:
+    app: kalyanam
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP
+  #type: LoadBalancer
+  #loadBalancerIP: 104.154.188.167
+---
+#Create a Google-managed Certificate resource
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: rajmanda-dev-cert
+  namespace: kalyanam
+spec:
+  domains:
+    - rajmanda-dev.com
+    - www.rajmanda-dev.com
+    - www.rajmanda-dev.com
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rsvp-ingress
+  namespace: kalyanam
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"  # Force HTTPS
+spec:
+  tls:
+    - hosts:
+        - rajmanda-dev.com
+        - www.rajmanda-dev.com
+        - eureka.rajmanda-dev.com  # Add your Eureka subdomain here
+      secretName: rajmanda-dev-tls  # Will be automatically managed by GCP
+  ingressClassName: nginx  # Set your ingress class here
+  rules:
+    - host: rajmanda-dev.com
+      http:
+        paths:
+          - path: /rsvp/allrsvps
+            pathType: Prefix
+            backend:
+              service:
+                name: rsvpbackend
+                port:
+                  number: 8090
+          - path: /rsvp/saversvp
+            pathType: Prefix
+            backend:
+              service:
+                name: rsvpbackend
+                port:
+                  number: 8090
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kalyanam
+                port:
+                  number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: eureka-ingress
+  namespace: eureka
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"  # Force HTTPS
+spec:
+  tls:
+    - hosts:
+        - rajmanda-dev.com
+        - www.rajmanda-dev.com
+        - eureka.rajmanda-dev.com   # Add your Eureka subdomain here
+      secretName: rajmanda-dev-tls  # Will be automatically managed by GCP
+  ingressClassName: nginx           # Set your ingress class here
+  rules:
+    - host: eureka.rajmanda-dev.com  # Rule for your Eureka service
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: my-eureka  # Give the  Name of your Eureka service
+                port:
+                  number: 8761

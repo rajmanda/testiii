@@ -1,0 +1,43 @@
+name: Deploy to GKE
+
+# Trigger the workflow whenever changes are pushed to the deploy-kalyanam directory
+on:
+  push:
+    paths:
+      - 'deploy-kalyanam/**'
+
+jobs:
+  update-manifest:
+    runs-on: ubuntu-latest
+    steps:
+      # Steps to update your manifest files (if any)
+      # e.g., checkout, update logic, etc.
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: update-manifest  # Ensure this job runs after the update-manifest job
+    permissions:
+      contents: read
+      id-token: write  # Make sure this is present
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2.0.0
+        with:
+          workload_identity_provider: 'projects/175415323680/locations/global/workloadIdentityPools/githubpool/providers/github'
+          service_account: github-wif-sa@properties-app-418208.iam.gserviceaccount.com
+
+      - name: Set up GKE credentials
+        uses: google-github-actions/get-gke-credentials@v1
+        with:
+          cluster_name: simple-autopilot-public-cluster
+          location: us-central1  # Adjust your cluster zone
+          project_id: properties-app-418208
+
+      - name: Deploy to GKE
+        run: |
+          kubectl apply -f deploy-kalyanam/kalyanam-deployment.yaml  # Adjust the path as needed
