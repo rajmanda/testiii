@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: angular-app-container
-          image: dockerrajmanda/kalyanam:105
+          image: dockerrajmanda/kalyanam:104
           imagePullPolicy: Always
           ports:
             - containerPort: 80
@@ -120,4 +120,8 @@ spec:
                 name: my-eureka  # Give the  Name of your Eureka service
                 port:
                   number: 8761
+
+
+
+
 

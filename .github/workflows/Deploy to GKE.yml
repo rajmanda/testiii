@@ -13,16 +13,20 @@ jobs:
         uses: actions/checkout@v4
 
       # Step 2: Get the list of changed files
-      # Step 2: Get the list of changed files
       - name: Get changed files
         run: |
+          echo "Checking for changed files..."
           if git rev-parse --verify HEAD^ >/dev/null 2>&1; then
+            echo "Detected previous commit, running git diff HEAD^"
             git diff --name-only HEAD^ HEAD > changed_files.txt
           else
+            echo "No previous commit, running git diff HEAD"
             git diff --name-only HEAD > changed_files.txt
           fi
-          cat changed_files.txt
+          echo "Changed files:"
+          cat changed_files.txt  # Show the contents of the changed_files.txt for debugging
           echo "CHANGED_FILES=$(cat changed_files.txt | tr '\n' ' ')" >> $GITHUB_ENV  # Export changed files to environment variable
+          echo "CHANGED_FILES set as: $CHANGED_FILES"  # Print the variable to debug
 
   deploy:
     runs-on: ubuntu-latest
@@ -53,6 +57,8 @@ jobs:
       # Step 4: Deploy to GKE only for changed files
       - name: Deploy to GKE
         run: |
+          echo "Deploying changed files..."
+          echo "CHANGED_FILES: $CHANGED_FILES"  # Print the CHANGED_FILES variable to debug
           for file in $CHANGED_FILES; do
             echo "Deploying $file"
             kubectl apply -f $file
