@@ -40,4 +40,4 @@ jobs:
 
       - name: Deploy to GKE
         run: |
-          kubectl apply -f deploy-kalyanam/kalyanam-deployment.yaml  # Adjust the path as needed
+          kubectl apply -f deploy/kalyanam-deployment.yaml  # Adjust the path as needed
