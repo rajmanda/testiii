@@ -1,0 +1,122 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rsvpbackend
+  namespace: kalyanam
+  labels:
+    app: rsvpbackend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rsvpbackend
+  template:
+    metadata:
+      labels:
+        app: rsvpbackend
+    spec:
+      # securityContext:
+      #   runAsUser: 1000  # Specify the user ID
+      #   runAsGroup: 3000  # Specify the group ID
+      #   fsGroup: 2000     # Specify the file system group
+      volumes:
+      - name: tmp-volume
+        emptyDir: {}  # Create a writable empty directory
+
+      containers:
+      - name: rsvpbackend
+        image: dockerrajmanda/rsvpbackend:52
+        ports:
+        - containerPort: 8080
+        env:                                # Add the environment variable for container
+        - name: SPRING_PROFILES_ACTIVE
+          value: dev                        # Specify the profile you want to activate
+        volumeMounts:
+        - name: tmp-volume
+          mountPath: /tmpdir                # Mount the writable temp directory  
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        securityContext:
+          allowPrivilegeEscalation: false  # Prevent privilege escalation
+          readOnlyRootFilesystem: false      # Make root filesystem read-only
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rsvpbackend
+  namespace: kalyanam
+spec:
+  selector:
+    app: rsvpbackend
+  ports:
+    - protocol: TCP
+      port: 8090
+      targetPort: 8080
+  type: ClusterIP      
+---
+#apiVersion: networking.k8s.io/v1
+#kind: NetworkPolicy
+#metadata:
+#  name: allow-frontend-to-backend
+#  namespace: kalyanam
+#spec:
+#  podSelector:
+#    matchLabels:
+#      app: rsvpbackend  # Label for your rsvpbackend pods
+#  policyTypes:
+#    - Ingress
+#  ingress:
+#    - from:
+#        - podSelector:
+#            matchLabels:
+#              app: kalyanam  # Label for your frontend pods
+#
+#---
+#apiVersion: networking.k8s.io/v1
+#kind: NetworkPolicy
+#metadata:
+#  name: allow-backend-to-frontend
+#  namespace: kalyanam
+#spec:
+#  podSelector:
+#    matchLabels:
+#      app: rsvpbackend  # Label for your rsvpbackend pods
+#  policyTypes:
+#    - Egress
+#  egress:
+#    - to:
+#        - podSelector:
+#            matchLabels:
+#              app: kalyanam  # Label for your frontend pods
+#      ports:
+#        - protocol: TCP
+#          port: 80  # Ensure this matches your frontend service port
+#---
+#apiVersion: networking.k8s.io/v1
+#kind: NetworkPolicy
+#metadata:
+#  name: allow-rsvpbackend-and-frontend-to-eureka
+#  namespace: default  # Namespace where the Eureka server is running
+#spec:
+#  podSelector:
+#    matchLabels:
+#      app: eureka  # Label of the Eureka server pods
+#  ingress:
+#    - from:
+#        - namespaceSelector:
+#            matchLabels:
+#              name: kalyanam  # Namespace of the rsvpbackend
+#          podSelector:
+#            matchLabels:
+#              app: rsvpbackend  # Label of the rsvpbackend pods
+#        - namespaceSelector:
+#            matchLabels:
+#              name: kalyanam  # Namespace of the frontend
+#          podSelector:
+#            matchLabels:
+#              app: kalyanam  # Label of the frontend pods
+
