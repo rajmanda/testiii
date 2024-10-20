@@ -8,9 +8,11 @@ jobs:
   checkout-manifests:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Checkout repository
+      # Step 1: Checkout repository (with full history for diff to work)
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # Fetch at least two commits to compare
 
       # Step 2: Get the list of changed files
       - name: Get changed files
