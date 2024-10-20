@@ -4,7 +4,7 @@ name: Deploy to GKE
 on:
   push:
     paths:
-      - 'deploy-kalyanam/**'
+      - 'deploy/**'
 
 jobs:
   update-manifest:
@@ -42,4 +42,3 @@ jobs:
         run: |
           kubectl apply -f deploy/kalyanam-deployment.yaml  # Adjust the path as needed
 
-          
