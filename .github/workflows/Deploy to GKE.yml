@@ -38,7 +38,22 @@ jobs:
           location: us-central1  # Adjust your cluster zone
           project_id: properties-app-418208
 
-      - name: Deploy to GKE
-        run: |
-          kubectl apply -f deploy/kalyanam-deployment.yaml  # Adjust the path as needed
+      # - name: Deploy to GKE
+      #   run: |
+      #     kubectl apply -f deploy/kalyanam-deployment.yaml  # Adjust the path as needed
 
+      - name: Get list of changed files
+        id: changed_files
+        run: |
+          # Get a list of changed files in the deploy/ directory
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- 'deploy/**')
+          echo "changed_files=$CHANGED_FILES" >> $GITHUB_ENV
+
+      - name: Apply changed deployment files
+        run: |
+          for file in $CHANGED_FILES; do
+            echo "Applying $file"
+            kubectl apply -f $file
+          done
+        env:
+          CHANGED_FILES: ${{ env.changed_files }}
