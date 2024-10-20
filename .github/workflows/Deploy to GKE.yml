@@ -13,10 +13,14 @@ jobs:
         uses: actions/checkout@v4
 
       # Step 2: Get the list of changed files
+      # Step 2: Get the list of changed files
       - name: Get changed files
         run: |
-          git fetch --depth=2
-          git diff --name-only HEAD^ HEAD > changed_files.txt
+          if git rev-parse --verify HEAD^ >/dev/null 2>&1; then
+            git diff --name-only HEAD^ HEAD > changed_files.txt
+          else
+            git diff --name-only HEAD > changed_files.txt
+          fi
           cat changed_files.txt
           echo "CHANGED_FILES=$(cat changed_files.txt | tr '\n' ' ')" >> $GITHUB_ENV  # Export changed files to environment variable
 
