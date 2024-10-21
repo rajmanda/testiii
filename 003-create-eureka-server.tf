@@ -82,6 +82,13 @@ resource "null_resource" "move_common_chart" {
   provisioner "local-exec" {
     command = <<EOT
       echo "Moving common chart into the Eureka charts directory..."
+
+      echo ".......RAJ - listing eureka"
+      ls -laR ./eureka
+      
+      echo ".......RAJ - listing common"
+      ls -laR ./common
+
       if [ -d common ]; then
         mv common ./eureka/charts/
         echo "Common chart moved to './eureka/charts/'."
