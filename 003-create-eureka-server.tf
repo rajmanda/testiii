@@ -97,8 +97,8 @@ resource "null_resource" "move_common_chart" {
         exit 1
       fi
 
-      echo "Contents of './eureka/charts/':"
-      ls -la ./eureka/charts/
+      echo "RAJ ....Contents of './eureka/charts/':"
+      ls -laR ./eureka/charts/
     EOT
   }
 }
@@ -138,7 +138,7 @@ resource "helm_release" "eureka" {
     command = <<EOT
       echo "Preparing to install the Eureka Helm release..."
       echo "Checking the contents of the './eureka' directory before installation:"
-      ls -l ./eureka
+      ls -laR ./eureka
     EOT
   }
 }
