@@ -74,19 +74,19 @@ jobs:
         terraform workspace select "${{ env.WORKSPACE_NAME }}" || terraform workspace new "${{ env.WORKSPACE_NAME }}"
 
     # Generates an execution plan for Terraform
-    # - name: Terraform Plan
-    #   id: terraform_plan
-    #   run: terraform plan -input=false
+    - name: Terraform Plan
+      id: terraform_plan
+      run: terraform plan -input=false
 
-    # - name: Terraform Apply
-    #   id: terraform_apply
-    #   run: terraform apply -auto-approve -input=false
+    - name: Terraform Apply
+      id: terraform_apply
+      run: terraform apply -auto-approve -input=false
 
     # Generates a destruction plan for Terraform
-    - name: Terraform Plan Destroy
-      id: terraform_plan_destroy
-      run: terraform plan -destroy -input=false
+    # - name: Terraform Plan Destroy
+    #   id: terraform_plan_destroy
+    #   run: terraform plan -destroy -input=false
 
-    - name: Terraform Destroy
-      id: terraform_destroy
-      run: terraform destroy -auto-approve -input=false
+    # - name: Terraform Destroy
+    #   id: terraform_destroy
+    #   run: terraform destroy -auto-approve -input=false
