@@ -140,4 +140,14 @@ Step 3: Set Project (Optional)
 Step 4: Try Terraform Command
   After authenticating, try running the Terraform command:
   terraform plan
+
+########### Kubeclt Useful commands #########
+# To delete the ns that is stuck in terminating state. 
+  1. kubectl get ns ingress-nginx.yml -o yaml > ingress-nginx.yml
+  2. Remove all the finalizer values from the namespace YAML using a text editor such as vi
+  3. Start kubectl proxy
+     kubectl proxy
+     Starting to serve on 127.0.0.1:8001
+  4. curl  -H "Content-Type: application/yaml" --request PUT --data-binary "@ingress-nginx.yml" http://127.0.0.1:8001/api/v1/namespaces/ingress-nginx/finalize
+  5. Confirm the namespace has been deleted
   
