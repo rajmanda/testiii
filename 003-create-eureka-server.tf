@@ -91,7 +91,7 @@ resource "null_resource" "move_common_chart" {
       fi
 
       echo "Contents of './eureka/charts/':"
-      ls -l ./eureka/charts/
+      ls -la ./eureka/charts/
     EOT
   }
 }
