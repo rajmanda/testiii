@@ -47,7 +47,7 @@ resource "null_resource" "fetch_and_extract_charts" {
   provisioner "local-exec" {
     command = <<EOT
       echo "Fetching Eureka chart..."
-      helm fetch ygqygq2/eureka --version 1.0.0
+      helm fetch ygqygq2/eureka --version 2.0.0
 
       echo "Fetching Bitnami common chart..."
       helm fetch bitnami/common --version 2.26.0
@@ -123,8 +123,9 @@ resource "helm_release" "eureka" {
   depends_on = [null_resource.verify_chart_yaml, kubernetes_namespace.eurekans]
   
   name       = "my-eureka"
-  chart      = "./eureka"  # Use the local directory after modifying the chart structure
-  version    = "1.0.0"
+  #chart      = "./eureka"  # Use the local directory after modifying the chart structure
+  chart      = "ygqygq2/eureka"
+  version    = "2.0.0"
 
   namespace  = "eureka"
 
