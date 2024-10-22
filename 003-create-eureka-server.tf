@@ -54,7 +54,7 @@ resource "null_resource" "fetch_and_extract_charts" {
 
       if [ -f eureka-2.0.0.tgz ]; then
         echo "Extracting Eureka chart..."
-        tar -xvzf eureka-2.0.0.tgz -C ./eureka
+        tar -xvzf eureka-2.0.0.tgz                # this will extract to ./eureka
         echo "Eureka chart extracted successfully."
       else
         echo "Eureka chart not found!"
