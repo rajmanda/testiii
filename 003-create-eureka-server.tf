@@ -14,7 +14,6 @@ data "google_container_cluster" "primary" {
 }
 
 provider "kubernetes" {
-  #host                   = "https://${module.kubernetes-engine_example_simple_autopilot_public.kubernetes_endpoint}"
   host                   = "https://${data.google_container_cluster.existing.endpoint}"
   token                  = data.google_client_config.default.access_token
   cluster_ca_certificate = base64decode(data.google_container_cluster.primary.master_auth[0].cluster_ca_certificate)
@@ -23,7 +22,6 @@ provider "kubernetes" {
 # Define the Helm provider
 provider "helm" {
   kubernetes {
-    #host                   = "https://${module.kubernetes-engine_example_simple_autopilot_public.kubernetes_endpoint}"
     host                   = "https://${data.google_container_cluster.existing.endpoint}"
     token                  = data.google_client_config.default.access_token
     cluster_ca_certificate = base64decode(data.google_container_cluster.primary.master_auth[0].cluster_ca_certificate)
@@ -32,7 +30,7 @@ provider "helm" {
 
 # Step 1: Create a directory for the charts first
 resource "null_resource" "prepare_eureka_chart" {
-  depends_on = [ data.google_container_cluster.existing ]
+  depends_on = [data.google_container_cluster.existing]
   provisioner "local-exec" {
     command = <<EOT
       echo "Creating directory for Eureka charts..."
@@ -82,16 +80,16 @@ resource "null_resource" "move_common_chart" {
   provisioner "local-exec" {
     command = <<EOT
       echo "Moving common chart into the Eureka charts directory..."
-      
+
       echo ".......RAJ - listing eureka"
       ls -laR ./eureka
       
       echo ".......RAJ - listing common"
       ls -laR ./common
 
-      if [ -d "./common" ]; then
-        mv ./common ./eureka/charts/ || { echo "Failed to move common chart!"; exit 1; }
-        echo "Common chart moved successfully."
+      if [ -d common ]; then
+        mv common ./eureka/charts/
+        echo "Common chart moved to './eureka/charts/'."
       else
         echo "Common directory not found!"
         exit 1
@@ -103,10 +101,26 @@ resource "null_resource" "move_common_chart" {
   }
 }
 
+# Check if the Chart.yaml exists in the Eureka directory
+resource "null_resource" "verify_chart_yaml" {
+  depends_on = [null_resource.move_common_chart]
+
+  provisioner "local-exec" {
+    command = <<EOT
+      echo "Verifying the existence of the 'Chart.yaml' file..."
+      if [ ! -f ./eureka/Chart.yaml ]; then
+        echo "'Chart.yaml' file is missing in './eureka' directory!"
+        exit 1
+      else
+        echo "'Chart.yaml' file exists in './eureka' directory."
+      fi
+    EOT
+  }
+}
 
 # Install the Eureka Helm chart
 resource "helm_release" "eureka" {
-  depends_on = [kubernetes_namespace.eurekans]
+  depends_on = [null_resource.verify_chart_yaml, kubernetes_namespace.eurekans]
   
   name       = "my-eureka"
   chart      = "./eureka"  # Use the local directory after modifying the chart structure
