@@ -159,7 +159,7 @@ provider "helm" {
 # }
 
 resource "null_resource" "fetch_and_extract_charts" {
-  depends_on = [null_resource.prepare_eureka_chart]
+  #depends_on = [null_resource.prepare_eureka_chart]
 
   provisioner "local-exec" {
     command = <<EOT
