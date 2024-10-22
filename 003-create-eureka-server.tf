@@ -47,7 +47,7 @@ resource "null_resource" "fetch_and_extract_charts" {
   provisioner "local-exec" {
     command = <<EOT
       echo "Fetching Eureka chart..."
-      helm fetch ygqygq2/eureka --version 2.0.0
+      helm fetch ygqygq2/eureka --version 1.0.0
 
       echo "Fetching Bitnami common chart..."
       helm fetch bitnami/common --version 2.26.0
