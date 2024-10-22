@@ -177,7 +177,37 @@ resource "null_resource" "fetch_and_extract_charts" {
   }
 }
 
-# Optional: Output Eureka Helm release status
+# Install the Eureka Helm chart using the extracted chart
+resource "helm_release" "eureka" {
+  depends_on = [null_resource.fetch_and_extract_charts]
+  
+  name       = "my-eureka"
+  chart      = "./eureka"  # Path to the extracted chart directory
+  version    = "8.1.4"     # Bitnami Eureka chart version
+  namespace  = "eureka"
+
+  set {
+    name  = "replicaCount"
+    value = "1"
+  }
+
+  set {
+    name  = "REGISTER_WITH_EUREKA"
+    value = "False"
+  }
+
+  set {
+    name  = "FETCH_REGISTRY"
+    value = "False"
+  }
+
+  set {
+    name  = "ENABLE_SELF_PRESERVATION"
+    value = "False"
+  }
+}
+
+# Output the Eureka Helm release status
 output "eureka_helm_release_status" {
   value = helm_release.eureka.status
 }
