@@ -82,16 +82,16 @@ resource "null_resource" "move_common_chart" {
   provisioner "local-exec" {
     command = <<EOT
       echo "Moving common chart into the Eureka charts directory..."
-
+      
       echo ".......RAJ - listing eureka"
       ls -laR ./eureka
       
       echo ".......RAJ - listing common"
       ls -laR ./common
 
-      if [ -d common ]; then
-        mv common ./eureka/charts/
-        echo "Common chart moved to './eureka/charts/'."
+      if [ -d "./common" ]; then
+        mv ./common ./eureka/charts/ || { echo "Failed to move common chart!"; exit 1; }
+        echo "Common chart moved successfully."
       else
         echo "Common directory not found!"
         exit 1
@@ -102,6 +102,7 @@ resource "null_resource" "move_common_chart" {
     EOT
   }
 }
+
 
 # Install the Eureka Helm chart
 resource "helm_release" "eureka" {
