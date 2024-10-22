@@ -158,13 +158,12 @@ provider "helm" {
 #   }
 # }
 
+# Fetch and extract the Eureka Helm chart from Bitnami
 resource "null_resource" "fetch_and_extract_charts" {
-  #depends_on = [null_resource.prepare_eureka_chart]
-
   provisioner "local-exec" {
     command = <<EOT
       echo "Fetching Eureka chart..."
-      helm fetch bitnami/eureka --version 8.1.4  # Use Bitnami chart instead
+      helm fetch bitnami/eureka --version 8.1.4  # Use Bitnami chart
 
       if [ -f eureka-8.1.4.tgz ]; then
         echo "Extracting Eureka chart..."
@@ -178,8 +177,8 @@ resource "null_resource" "fetch_and_extract_charts" {
   }
 }
 
-
 # Optional: Output Eureka Helm release status
 output "eureka_helm_release_status" {
   value = helm_release.eureka.status
 }
+
