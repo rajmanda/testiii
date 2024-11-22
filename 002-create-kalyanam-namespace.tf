@@ -4,6 +4,9 @@ data "google_container_cluster" "existing" {
   location = "us-central1"                      # Replace with your cluster location
 }
 
+# Get the Google client configuration
+data "google_client_config" "default" {}
+
 provider "kubernetes" {
   host                   = "https://${data.google_container_cluster.existing.endpoint}"
   token                  = data.google_client_config.default.access_token
