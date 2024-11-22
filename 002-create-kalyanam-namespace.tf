@@ -21,17 +21,14 @@ provider "kubernetes" {
 
 provider "null" {}
 
-data "kubernetes_namespace" "existing" {
-  metadata {
-    name = "kalyanam"
-  }
+data "external" "namespace_check" {
+  program = ["bash", "${path.module}/scripts/check_namespace.sh", "kalyanam"]
 }
 
 locals {
-  namespace_exists = try(data.kubernetes_namespace.existing.metadata[0].name == "kalyanam", false)
+  namespace_exists = data.external.namespace_check.result.exists
 }
 
-# Deploy namespace GKE Cluster
 resource "kubernetes_namespace" "kalyanam" {
   count = local.namespace_exists ? 0 : 1
 
