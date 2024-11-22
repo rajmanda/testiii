@@ -84,6 +84,7 @@ jobs:
     
   deploy:
     runs-on: ubuntu-latest
+    needs: terraform        # Ensure this job runs after the terraform job creates or checks for the namespace.
     permissions:
       contents: read
       id-token: write  # Make sure this is present
