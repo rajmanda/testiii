@@ -41,3 +41,10 @@ resource "kubernetes_namespace" "kalyanam" {
 
   depends_on = [data.google_container_cluster.existing]
 }
+
+# Deploy namespace GKE Cluster
+resource "kubernetes_namespace" "test" {
+  metadata {
+    name = "test"
+  }
+}
