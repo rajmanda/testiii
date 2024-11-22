@@ -26,7 +26,7 @@ data "external" "namespace_check" {
 }
 
 locals {
-  namespace_exists = data.external.namespace_check.result.exists
+  namespace_exists = data.external.namespace_check.result.exists == "true"
 }
 
 resource "kubernetes_namespace" "kalyanam" {
