@@ -28,7 +28,7 @@ data "kubernetes_namespace" "existing" {
 }
 
 locals {
-  namespace_exists = length(data.kubernetes_namespace.existing.*) > 0
+  namespace_exists = try(data.kubernetes_namespace.existing.metadata[0].name == "kalyanam", false)
 }
 
 # Deploy namespace GKE Cluster
