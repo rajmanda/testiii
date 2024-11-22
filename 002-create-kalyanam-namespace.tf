@@ -19,6 +19,8 @@ provider "kubernetes" {
   cluster_ca_certificate = base64decode(data.google_container_cluster.primary.master_auth[0].cluster_ca_certificate)
 }
 
+provider "null" {}
+
 data "kubernetes_namespace" "existing" {
   metadata {
     name = "kalyanam"
