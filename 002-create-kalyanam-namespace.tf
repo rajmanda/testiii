@@ -7,6 +7,12 @@ data "google_container_cluster" "existing" {
 # Get the Google client configuration
 data "google_client_config" "default" {}
 
+# Get the GKE cluster data
+data "google_container_cluster" "primary" {
+  name     = "simple-autopilot-public-cluster"  # Replace with your GKE cluster name
+  location = "us-central1"  # Adjust as needed
+}
+
 provider "kubernetes" {
   host                   = "https://${data.google_container_cluster.existing.endpoint}"
   token                  = data.google_client_config.default.access_token
