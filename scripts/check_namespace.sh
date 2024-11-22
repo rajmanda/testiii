@@ -3,7 +3,7 @@
 NAMESPACE=$1
 
 if kubectl get namespace "$NAMESPACE" > /dev/null 2>&1; then
-  echo '{"exists": true}'
+  echo '{"exists": "true"}'
 else
-  echo '{"exists": false}'
+  echo '{"exists": "false"}'
 fi
