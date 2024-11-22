@@ -28,6 +28,11 @@ jobs:
         workload_identity_provider: 'projects/175415323680/locations/global/workloadIdentityPools/githubpool/providers/github'
         service_account: github-wif-sa@properties-app-418208.iam.gserviceaccount.com
 
+    # Run the bash script to check if the namespace exists
+    - name: Run namespace check
+      run: |
+        chmod +x .github/workflows/scripts/check_namespace.sh
+        
     - name: Setup Terraform
       id: setup_terraform
       uses: hashicorp/setup-terraform@v1
