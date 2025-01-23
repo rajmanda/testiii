@@ -151,4 +151,4 @@ Step 4: Try Terraform Command
   4. curl  -H "Content-Type: application/yaml" --request PUT --data-binary "@ingress-nginx.yml" http://127.0.0.1:8001/api/v1/namespaces/ingress-nginx/finalize
   5. Confirm the namespace has been deleted
      
-  
+Running on 01/23/2024
